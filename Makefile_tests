@@ -1,0 +1,10 @@
+bimap_test:
+	scons build/bimap_test
+	./build/bimap_test
+graph1_test:
+	scons build/graph1_test
+	./build/graph1_test
+graph2_test:
+	scons build/graph2_test
+	./build/graph2_test
+all_tests: bimap_test graph1_test graph2_test

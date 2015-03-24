@@ -14,7 +14,7 @@ if build_mode not in ['debug', 'release']:
 ccflags = [
     '-std=c++11',
     '-Wall',
-    '-pedantic-errors',
+    '-pedantic-errors'
 ]
 
 cppdefines = []
@@ -51,11 +51,13 @@ lib = SConscript(os.path.join('src', 'SConscript'))
 # Depends(tests, lib)
 
 libs = [
-    'cppunit'
+    'cppunit',
+    'boost_system'
 ]
 
 env.Program(target=os.path.join(taget_dir, 'main'), source=['src/core/main.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'bimap_test'), source=['src/core/bimap_test.cpp'], LIBS=libs)
-env.Program(target=os.path.join(taget_dir, 'graph_test'), source=['src/core/graph_test.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'graph_test2'), source=['src/core/graph_test2.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'graph_test3'), source=['src/core/graph_test3.cpp'], LIBS=libs)
+
+env.Program(target=os.path.join(taget_dir, 'bimap_test'), source=['src/core/bimap_test.cpp'], LIBS=libs)
+env.Program(target=os.path.join(taget_dir, 'graph1_test'), source=['src/core/graph1_test.cpp'], LIBS=libs)
+env.Program(target=os.path.join(taget_dir, 'graph2_test'), source=['src/core/graph2_test.cpp'], LIBS=libs)
+env.Program(target=os.path.join(taget_dir, 'graph3_test'), source=['src/core/graph3_test.cpp'], LIBS=libs)

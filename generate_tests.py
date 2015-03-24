@@ -1,14 +1,18 @@
 
-testFile = file('tests.txt', 'r')
+testsFile = file('tests.txt', 'r')
 makefileTests = file('Makefile_tests', 'w')
 
-s = 'init'
-while(s != EOF):
-  s = testFile.readline()
-  print s
+str = ''
+all = ''
+for line in testsFile:
+  s = line.rstrip()
   s = s.replace('\n', '')
   s = s + '_test'
-  str = s + ':\n\tscons build/' + s + '\n\t./build/' + s
-  # makefileTests.write(str)
+  all += ' ' + s
+  str = str + s + ':\n\tscons build/' + s + '\n\t./build/' + s + '\n'
 
-print str
+str += 'all_tests:' + all + '\n'
+
+makefileTests.write(str)
+
+print 'Finished'
