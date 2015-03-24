@@ -1,0 +1,3 @@
+Import("env")
+
+# env.CppUnitTest('money_test2', ['money_test2.cpp'])
