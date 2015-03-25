@@ -1,10 +1,25 @@
-bimap_test:
-	scons build/bimap_test
-	./build/bimap_test
+main:
+	scons main
+	./main
+graph3_test:
+	scons graph3_test
+	./graph3_test
 graph1_test:
-	scons build/graph1_test
-	./build/graph1_test
+	scons graph1_test
+	./graph1_test
+policy_test:
+	scons policy_test
+	./policy_test
 graph2_test:
-	scons build/graph2_test
-	./build/graph2_test
-all_tests: bimap_test graph1_test graph2_test
+	scons graph2_test
+	./graph2_test
+bimap_test:
+	scons bimap_test
+	./bimap_test
+graph4_test:
+	scons graph4_test
+	./graph4_test
+
+all_tests: main graph3_test graph1_test policy_test graph2_test bimap_test graph4_test
+
+.PHONY: main graph3_test graph1_test policy_test graph2_test bimap_test graph4_test

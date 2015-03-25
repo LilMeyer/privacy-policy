@@ -1,18 +1,15 @@
+import glob
 
-testsFile = file('tests.txt', 'r')
 makefileTests = file('Makefile_tests', 'w')
-
+files = glob.glob('src/core/*.cpp')
 str = ''
 all = ''
-for line in testsFile:
-  s = line.rstrip()
-  s = s.replace('\n', '')
-  s = s + '_test'
-  all += ' ' + s
-  str = str + s + ':\n\tscons build/' + s + '\n\t./build/' + s + '\n'
 
-str += 'all_tests:' + all + '\n'
+for file in files:
+  f = file[9:-4]
+  all = all + ' ' + f
+  str = str + f + ':\n\tscons ' + f + '\n\t./' + f + '\n'
+str = str + '\nall_tests:' + all + '\n\n'
+str = str + '.PHONY:' + all + '\n'
 
 makefileTests.write(str)
-
-print 'Finished'

@@ -1,11 +1,8 @@
-include Makefile_tests
-
 all:
 	scons
 	./build/main
 
-# compile_main:
-# 	scons main
+include Makefile_tests
 
 clean:
 	rm -rf build
@@ -13,9 +10,7 @@ clean:
 generate_tests:
 	python generate_tests.py
 
-main:
-	scons
-	./build/main
+dot:
+	dot tc-out.dot -Tpng -o image.png
 
-
-.PHONY: all main money_test bimap_test graph_test
+.PHONY: all

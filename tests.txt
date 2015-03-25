@@ -1,3 +1,0 @@
-bimap
-graph1
-graph2
