@@ -79,8 +79,6 @@ public:
     Rule r(0, 1, 2, false);
     rules.push_back(r);
 
-
-
     std::cout << "Hello" << A << std::endl;
   }
   // A -> B
