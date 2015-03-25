@@ -19,4 +19,5 @@ install:
 
 script:
   - scons mode=$BUILD_MODE
-  - make money_test
+  - make generate_tests
+  - make all_tests

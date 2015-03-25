@@ -48,8 +48,6 @@ Export('env', 'build_mode')
 
 # library and tests
 lib = SConscript(os.path.join('src', 'SConscript'))
-# tests = SConscript(os.path.join('tests', 'SConscript'))
-# Depends(tests, lib)
 
 libs = [
     'cppunit',
@@ -60,14 +58,4 @@ files = glob.glob('src/core/*.cpp')
 
 
 for file in files:
-    print file
-    print file[9:-4]
     t = env.Program(target=file[9:-4], source=[file], LIBS=libs)
-
-# env.Program(target=os.path.join(taget_dir, 'main'), source=['src/core/main.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'bimap_test'), source=['src/core/bimap_test.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'graph1_test'), source=['src/core/graph1_test.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'graph2_test'), source=['src/core/graph2_test.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'graph3_test'), source=['src/core/graph3_test.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'graph4_test'), source=['src/core/graph4_test.cpp'], LIBS=libs)
-# env.Program(target=os.path.join(taget_dir, 'graph4_test'), source=['src/core/policy_test.cpp'], LIBS=libs)

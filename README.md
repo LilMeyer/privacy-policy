@@ -1,3 +1,3 @@
-template-cpp
-============
-[![Build Status](https://travis-ci.org/LilMeyer/template-cpp.svg?branch=master)](https://travis-ci.org/LilMeyer/template-cpp)
+privacy-policy
+==============
+[![Build Status](https://travis-ci.org/LilMeyer/privacy-policy.svg?branch=master)](https://travis-ci.org/LilMeyer/privacy-policy)
