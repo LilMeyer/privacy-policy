@@ -11,6 +11,9 @@ if build_mode not in ['debug', 'release']:
     sys.stderr.write('Oh noes: only "debug" and "release" build modes are supported\n')
     Exit(1)
 
+print 'Build mode: ' + build_mode
+
+
 # C++ flags and defines
 ccflags = [
     '-std=c++11',

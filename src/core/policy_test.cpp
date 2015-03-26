@@ -1,13 +1,15 @@
 #include <iostream>                  // for std::cout
 #include <utility>                   // for std::pair
 #include <algorithm>                 // for std::for_each
+#include <vector>
+
+/* Order is important ! */
+#include <boost/graph/transitive_closure.hpp>
+#include <boost/graph/graphviz.hpp>
+#include <boost/graph/graph_utility.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/graph_utility.hpp>
-#include <boost/graph/graphviz.hpp>
-#include <boost/graph/transitive_closure.hpp>
-#include <vector>
 
 #include <cppunit/TestAssert.h>
 #include <cppunit/TestCaller.h>
@@ -21,9 +23,13 @@
 using namespace boost;
 
 class GraphTest : public CppUnit::TestFixture {
-typedef std::pair<int, int> Edge;
+typedef std::pair <int, int> Edge;
 typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
-typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
+typedef property <vertex_name_t, char> Name;
+typedef property <vertex_index_t, std::size_t, Name> Index;
+typedef adjacency_list <listS, listS, directedS, Index> Graph_t;
+typedef typename graph_traits <Graph>::vertex_descriptor Vertex;
+typedef graph_traits <Graph_t>::vertex_descriptor vertex_t;
 
 struct Rule {
   Rule(const int priority, const int actor, const int object, bool permission)
@@ -45,25 +51,36 @@ private:
 
 private:
   enum { A, B, C, D, E, F, G, N };
-  const int num_vertices = N;
+  // const int num_vertices = N;
+  const int nVertices = 7;
   // Declare actors and objects graphs
   Graph actorsHierarchy, objectsHierarchy;
+  adjacency_list <> actorsHierarchyClosure, objectsHierarchyClosure;
+
   std::vector<Edge> actorsEdgeArray, objectsEdgeArray;
+
+  Graph_t actorsHierarchy_t, objectsHierarchy_t;
+  std::vector <vertex_t> actorsVerts, objectsVerts;
+
   std::vector<Rule> rules;
 public:
-  GraphTest() : actorsHierarchy(N), objectsHierarchy(N) {
+  GraphTest() : actorsHierarchy(nVertices), objectsHierarchy(nVertices),
+                actorsVerts(nVertices), objectsVerts(nVertices) {
+
+    char name[] = "abcdefgh";
+
     actorsEdgeArray.push_back(Edge(A, B));
     actorsEdgeArray.push_back(Edge(A, C));
     actorsEdgeArray.push_back(Edge(B, D));
     actorsEdgeArray.push_back(Edge(B, E));
     actorsEdgeArray.push_back(Edge(C, F));
     actorsEdgeArray.push_back(Edge(C, G));
-    // add the edges to the graph object
+    // // add the edges to the graph object
     for (unsigned int i = 0; i < actorsEdgeArray.size(); ++i) {
       add_edge(actorsEdgeArray[i].first, actorsEdgeArray[i].second, actorsHierarchy);
     }
 
-    // Declare objects graph
+    // // Declare objects graph
     objectsEdgeArray.push_back(Edge(A, B));
     objectsEdgeArray.push_back(Edge(A, C));
     objectsEdgeArray.push_back(Edge(B, D));
@@ -75,11 +92,37 @@ public:
       add_edge(objectsEdgeArray[i].first, objectsEdgeArray[i].second, objectsHierarchy);
     }
 
-    // Declare rules
+    for (int i = 0; i < 7; ++i) {
+      actorsVerts[i] = add_vertex(Index(i, Name('a' + i)), actorsHierarchy_t);
+      objectsVerts[i] = add_vertex(Index(i, Name('a' + i)), objectsHierarchy_t);
+    }
+
+    add_edge(actorsVerts[0], actorsVerts[1], actorsHierarchy_t);
+    add_edge(actorsVerts[0], actorsVerts[2], actorsHierarchy_t);
+    add_edge(actorsVerts[1], actorsVerts[3], actorsHierarchy_t);
+    add_edge(actorsVerts[1], actorsVerts[4], actorsHierarchy_t);
+    add_edge(actorsVerts[2], actorsVerts[5], actorsHierarchy_t);
+    add_edge(actorsVerts[2], actorsVerts[6], actorsHierarchy_t);
+
+    add_edge(objectsVerts[0], objectsVerts[1], objectsHierarchy_t);
+    add_edge(objectsVerts[0], objectsVerts[2], objectsHierarchy_t);
+    add_edge(objectsVerts[1], objectsVerts[3], objectsHierarchy_t);
+    add_edge(objectsVerts[1], objectsVerts[4], objectsHierarchy_t);
+    add_edge(objectsVerts[2], objectsVerts[5], objectsHierarchy_t);
+    add_edge(objectsVerts[2], objectsVerts[6], objectsHierarchy_t);
+
+    // // Declare rules
     Rule r(0, 1, 2, false);
     rules.push_back(r);
 
-    std::cout << "Hello" << A << std::endl;
+
+    transitive_closure(actorsHierarchy_t, actorsHierarchyClosure);
+    std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
+    print_graph(actorsHierarchyClosure, name);
+
+    std::ofstream out("actorsHierarchyClosure.dot");
+    write_graphviz(out, actorsHierarchyClosure, make_label_writer(name));
+
   }
   // A -> B
   // A -> C

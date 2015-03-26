@@ -1,6 +1,10 @@
 #include <boost/graph/transitive_closure.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+
 
 int main(int, char *[]) {
   using namespace boost;
