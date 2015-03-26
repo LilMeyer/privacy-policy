@@ -13,4 +13,6 @@ generate_tests:
 dot:
 	dot tc-out.dot -Tpng -o image.png
 
+test: all_tests
+
 .PHONY: all
