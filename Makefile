@@ -4,6 +4,12 @@ all:
 
 include Makefile_tests
 
+policy:
+	scons policy_test
+	./policy_test
+	dot actorsHierarchyClosure.dot -Tpng -o image.png
+	dot objectsHierarchyClosure.dot -Tpng -o image.png
+
 clean:
 	rm -rf build
 

@@ -120,8 +120,11 @@ public:
     std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
     print_graph(actorsHierarchyClosure, name);
 
-    std::ofstream out("actorsHierarchyClosure.dot");
-    write_graphviz(out, actorsHierarchyClosure, make_label_writer(name));
+    std::ofstream actorsHierarchyOut("actorsHierarchyClosure.dot");
+    write_graphviz(actorsHierarchyOut, actorsHierarchyClosure, make_label_writer(name));
+
+    std::ofstream objectsHierarchyOut("objectsHierarchyClosure.dot");
+    write_graphviz(objectsHierarchyOut, objectsHierarchyClosure, make_label_writer(name));
 
   }
   // A -> B
