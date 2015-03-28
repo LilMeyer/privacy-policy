@@ -1,6 +1,3 @@
-main:
-	scons main
-	./main
 graph3_test:
 	scons graph3_test
 	./graph3_test
@@ -20,6 +17,14 @@ graph4_test:
 	scons graph4_test
 	./graph4_test
 
-all_tests: main graph3_test graph1_test policy_test graph2_test bimap_test graph4_test
+all_tests: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test
 
-.PHONY: main graph3_test graph1_test policy_test graph2_test bimap_test graph4_test
+run_tests:
+	./graph3_test
+	./graph1_test
+	./policy_test
+	./graph2_test
+	./bimap_test
+	./graph4_test
+
+.PHONY: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test

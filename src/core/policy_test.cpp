@@ -43,6 +43,14 @@ struct Rule {
     std::cout << "Permission: " << permission << std::endl;
   }
 
+  void printMulitLines() {
+    std::cout << "Id: " << id << std::endl;
+    std::cout << "Priority: " << priority << std::endl;
+    std::cout << "Actor: " << actor << std::endl;
+    std::cout << "Object: " << object << std::endl;
+    std::cout << "Permission: " << permission << std::endl;
+  }
+
 private:
   int id;
   int priority;
@@ -142,7 +150,7 @@ public:
 
     setEffectiveRules();
 
-    for(int i = 0; i < effectiveRules.size(); i++) {
+    for(unsigned int i = 0; i < effectiveRules.size(); i++) {
       effectiveRules[i].print();
     }
 
@@ -152,8 +160,11 @@ public:
     return true;
   }
 
-  vetctor<Rule> setEffectiveRules(int actor, int object) {
+  void setEffectiveRules(int actor = 0, int object = 0) {
     // if not exist actor or object throw an error;
+    for(int i=0; i<rules.size(); i++) {
+      effectiveRules.push_back(rules[i]);
+    }
   }
 
 
