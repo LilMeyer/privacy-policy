@@ -5,6 +5,9 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
+/**
+ * Transitive closure
+ */
 
 int main(int, char *[]) {
   using namespace boost;
@@ -35,7 +38,7 @@ int main(int, char *[]) {
   print_graph(TC, name);
   std::cout << std::endl;
 
-  std::ofstream out("tc-out.dot");
+  std::ofstream out("build/tc-out.dot");
   write_graphviz(out, TC, make_label_writer(name));
 
   return 0;

@@ -66,6 +66,8 @@ private:
   // Declare actors and objects graphs
   Graph actorsHierarchy, objectsHierarchy;
   adjacency_list <> actorsHierarchyClosure, objectsHierarchyClosure;
+  // Graph_t actorsHierarchyClosure, objectsHierarchyClosure;
+  // adjacency_list <listS, listS, directedS> actorsHierarchyClosure, objectsHierarchyClosure;
 
   std::vector<Edge> actorsEdgeArray, objectsEdgeArray;
 
@@ -154,7 +156,54 @@ public:
       effectiveRules[i].print();
     }
 
+    {
+      graph_traits <Graph_t>::vertex_iterator i, end;
+      graph_traits <Graph_t>::adjacency_iterator  ai, a_end;
+      property_map < Graph_t, vertex_index_t >::type
+        index_map = get(vertex_index, actorsHierarchy_t);
+
+      for (boost::tie(i, end) = vertices(actorsHierarchy_t); i != end; ++i) {
+        std::cout << name[get(index_map, *i)];
+        boost::tie(ai, a_end) = adjacent_vertices(*i, actorsHierarchy_t);
+        if (ai == a_end)
+          std::cout << " has no children";
+        else
+          std::cout << " is the parent of ";
+        for (; ai != a_end; ++ai) {
+          std::cout << name[get(index_map, *ai)];
+          if (boost::next(ai) != a_end)
+            std::cout << ", ";
+        }
+        std::cout << std::endl;
+      }
+    }
+
+    {
+      graph_traits <adjacency_list <> >::vertex_iterator i, end;
+      graph_traits <adjacency_list <> >::adjacency_iterator  ai, a_end;
+      property_map < adjacency_list <>, vertex_index_t >::type
+        index_map = get(vertex_index, actorsHierarchyClosure);
+
+      for (boost::tie(i, end) = vertices(actorsHierarchyClosure); i != end; ++i) {
+        std::cout << name[get(index_map, *i)];
+        boost::tie(ai, a_end) = adjacent_vertices(*i, actorsHierarchyClosure);
+        if (ai == a_end)
+          std::cout << " has no children";
+        else
+          std::cout << " is the parent of ";
+        for (; ai != a_end; ++ai) {
+          std::cout << name[get(index_map, *ai)];
+          if (boost::next(ai) != a_end)
+            std::cout << ", ";
+        }
+        std::cout << std::endl;
+      }
+    }
+
+
   }
+
+
 
   bool accessToObject(int actor, int object) {
     return true;
@@ -162,10 +211,16 @@ public:
 
   void setEffectiveRules(int actor = 0, int object = 0) {
     // if not exist actor or object throw an error;
-    for(int i=0; i<rules.size(); i++) {
+    for(unsigned int i=0; i<rules.size(); i++) {
       effectiveRules.push_back(rules[i]);
     }
   }
+
+  // http://en.wikipedia.org/wiki/Tarjan%27s_off-line_lowest_common_ancestors_algorithm#CITEREFGabowTarjan1983
+
+  // vector<vertex_t> getAncestors(vertex_t v, Graph_t) {
+
+  // }
 
 
   static CppUnit::Test *suite() {

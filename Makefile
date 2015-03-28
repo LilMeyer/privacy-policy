@@ -13,7 +13,6 @@ policy:
 travis:
 	scons mode=debug && make generate_tests && make run_tests
 
-
 clean:
 	rm -f *_test
 	rm -f main
@@ -21,9 +20,6 @@ clean:
 
 generate_tests:
 	python generate_tests.py
-
-dot:
-	dot tc-out.dot -Tpng -o image.png
 
 test: generate_tests all_tests
 
