@@ -7,8 +7,8 @@ include Makefile_tests
 policy:
 	scons policy_test
 	./policy_test
-	dot actorsHierarchyClosure.dot -Tpng -o image.png
-	dot objectsHierarchyClosure.dot -Tpng -o image.png
+	dot build/actorsHierarchyClosure.dot -Tpng -o build/actorsHierarchyClosure.png
+	dot build/objectsHierarchyClosure.dot -Tpng -o build/objectsHierarchyClosure.png
 
 clean:
 	rm -rf build

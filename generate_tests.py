@@ -1,7 +1,7 @@
 import glob
 
 makefileTests = file('Makefile_tests', 'w')
-files = glob.glob('src/core/*.cpp')
+files = glob.glob('src/core/*_test.cpp')
 str = ''
 all = ''
 

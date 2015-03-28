@@ -32,10 +32,11 @@ typedef typename graph_traits <Graph>::vertex_descriptor Vertex;
 typedef graph_traits <Graph_t>::vertex_descriptor vertex_t;
 
 struct Rule {
-  Rule(const int priority, const int actor, const int object, bool permission)
-    : priority(priority), actor(actor), object(object) { }
+  Rule(const int id, const int priority, const int actor, const int object, bool permission)
+    : id(id), priority(priority), actor(actor), object(object) { }
 
   void print() {
+    std::cout << "Id: " << id << std::endl;
     std::cout << "Priority: " << priority << std::endl;
     std::cout << "Actor: " << actor << std::endl;
     std::cout << "Object: " << object << std::endl;
@@ -43,6 +44,7 @@ struct Rule {
   }
 
 private:
+  int id;
   int priority;
   int actor;
   int object;
@@ -62,7 +64,7 @@ private:
   Graph_t actorsHierarchy_t, objectsHierarchy_t;
   std::vector <vertex_t> actorsVerts, objectsVerts;
 
-  std::vector<Rule> rules;
+  std::vector<Rule> rules, effectiveRules;
 public:
   GraphTest() : actorsHierarchy(nVertices), objectsHierarchy(nVertices),
                 actorsVerts(nVertices), objectsVerts(nVertices) {
@@ -90,12 +92,17 @@ public:
 
     for (unsigned int i = 0; i < objectsEdgeArray.size(); ++i) {
       add_edge(objectsEdgeArray[i].first, objectsEdgeArray[i].second, objectsHierarchy);
+
     }
 
     for (int i = 0; i < 7; ++i) {
       actorsVerts[i] = add_vertex(Index(i, Name('a' + i)), actorsHierarchy_t);
+    }
+
+    for (int i = 0; i < 4; ++i) {
       objectsVerts[i] = add_vertex(Index(i, Name('a' + i)), objectsHierarchy_t);
     }
+
 
     add_edge(actorsVerts[0], actorsVerts[1], actorsHierarchy_t);
     add_edge(actorsVerts[0], actorsVerts[2], actorsHierarchy_t);
@@ -107,35 +114,46 @@ public:
     add_edge(objectsVerts[0], objectsVerts[1], objectsHierarchy_t);
     add_edge(objectsVerts[0], objectsVerts[2], objectsHierarchy_t);
     add_edge(objectsVerts[1], objectsVerts[3], objectsHierarchy_t);
-    add_edge(objectsVerts[1], objectsVerts[4], objectsHierarchy_t);
-    add_edge(objectsVerts[2], objectsVerts[5], objectsHierarchy_t);
-    add_edge(objectsVerts[2], objectsVerts[6], objectsHierarchy_t);
+    add_edge(objectsVerts[2], objectsVerts[3], objectsHierarchy_t);
 
     // // Declare rules
-    Rule r(0, 1, 2, false);
-    rules.push_back(r);
+    // Rule r(1, 0, 1, 2, false);
+    rules.push_back(Rule(1, 0, 1, 4, false));
+    rules.push_back(Rule(1, 0, 3, 2, false));
+    rules.push_back(Rule(1, 0, 3, 3, true));
+    rules.push_back(Rule(1, 0, 6, 4, false));
+
+    // rules.push
 
 
     transitive_closure(actorsHierarchy_t, actorsHierarchyClosure);
     std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
     print_graph(actorsHierarchyClosure, name);
 
-    std::ofstream actorsHierarchyOut("actorsHierarchyClosure.dot");
+    transitive_closure(objectsHierarchy_t, objectsHierarchyClosure);
+    std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
+    print_graph(objectsHierarchyClosure, name);
+
+    std::ofstream actorsHierarchyOut("build/actorsHierarchyClosure.dot");
     write_graphviz(actorsHierarchyOut, actorsHierarchyClosure, make_label_writer(name));
 
-    std::ofstream objectsHierarchyOut("objectsHierarchyClosure.dot");
+    std::ofstream objectsHierarchyOut("build/objectsHierarchyClosure.dot");
     write_graphviz(objectsHierarchyOut, objectsHierarchyClosure, make_label_writer(name));
 
+    setEffectiveRules();
+
+    for(int i = 0; i < effectiveRules.size(); i++) {
+      effectiveRules[i].print();
+    }
+
   }
-  // A -> B
-  // A -> C
-  // B -> D
-  // B -> E
-  // C -> F
-  // C -> G
 
   bool accessToObject(int actor, int object) {
     return true;
+  }
+
+  vetctor<Rule> setEffectiveRules(int actor, int object) {
+    // if not exist actor or object throw an error;
   }
 
 
@@ -157,6 +175,51 @@ protected:
 
   void test1() {
     std::cout << std::endl;
+
+
+
+
+  //   main = new Main();
+  //   resGraph = new OrientedGraph();
+  //   resGraph.set_table_name('Res test');
+  //   resGraph.add_node('CHUS', null);
+  //   resGraph.add_node('Laboratoires', 'CHUS');
+  //   resGraph.add_node('Microbio', 'Laboratoires');
+  //   resGraph.add_node('Hémato', 'Laboratoires');
+  //   resGraph.add_node('VIH', 'Hémato');
+  //   resGraph.add_node('Potassium', 'Hémato');
+  //   resGraph.add_node('Strep', 'Microbio');
+  //   resGraph.set_root('CHUS');
+  //   main.set_resources_graph(resGraph);
+
+  //   subjGraph = new OrientedGraph();
+  //   subjGraph.set_table_name('Sub test');
+  //   subjGraph.add_node('CHUS', null);
+  //   subjGraph.add_node('cardiologie', 'CHUS');
+  //   subjGraph.add_node('urgence', 'CHUS');
+  //   subjGraph.add_node('DoctorBernard', 'cardiologie');
+  //   subjGraph.add_node('DoctorBernard', 'urgence');
+  //   subjGraph.set_root('CHUS');
+  //   main.set_subjects_graph(subjGraph);
+
+  //   rules.push(new Rule(1, 1, 'cardiologie', 'Hémato', modality.prohibition, null, ''));
+  //   rules.push(new Rule(2, 1, 'urgence', 'Hémato', modality.permission, null, ''));
+  //   rules.push(new Rule(3, 1, 'DoctorBernard', 'CHUS', modality.prohibition, null, ''));
+  //   rules.push(new Rule(4, 1, 'DoctorBernard', 'VIH', modality.prohibition, null, ''));
+
+  //   main.set_rules(rules);
+  //   done();
+  // });
+
+  // it('applicable rules', function (done) {
+  //   applicableRules = main.applicableRules(subject, resource);
+  //   Object.keys(applicableRules).should.eql(['1', '2', '3', '4']);
+  //   done();
+  // });
+
+
+
+
 
 
 

@@ -1,6 +1,4 @@
-import os
-import sys
-import glob
+import os, sys, glob
 
 taget_dir = "build"
 
@@ -58,7 +56,6 @@ libs = [
 ]
 
 files = glob.glob('src/core/*.cpp')
-
 
 for file in files:
     t = env.Program(target=file[9:-4], source=[file], LIBS=libs)
