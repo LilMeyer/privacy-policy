@@ -3,6 +3,10 @@
 #include <algorithm>                 // for std::for_each
 #include <vector>
 
+#include "./../models/rule.hpp"
+#include "./../models/hierarchy.hpp"
+#include "policy.cpp"
+
 /* Order is important ! */
 #include <boost/graph/transitive_closure.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -23,204 +27,96 @@
 using namespace boost;
 
 class GraphTest : public CppUnit::TestFixture {
-typedef std::pair <int, int> Edge;
-typedef adjacency_list<vecS, vecS, bidirectionalS> Graph;
-typedef property <vertex_name_t, char> Name;
-typedef property <vertex_index_t, std::size_t, Name> Index;
-typedef adjacency_list <listS, listS, directedS, Index> Graph_t;
-typedef typename graph_traits <Graph>::vertex_descriptor Vertex;
-typedef graph_traits <Graph_t>::vertex_descriptor vertex_t;
-
-struct Rule {
-  Rule(const int id, const int priority, const int actor, const int object, bool permission)
-    : id(id), priority(priority), actor(actor), object(object) { }
-
-  void print() {
-    std::cout << "Id: " << id << std::endl;
-    std::cout << "Priority: " << priority << std::endl;
-    std::cout << "Actor: " << actor << std::endl;
-    std::cout << "Object: " << object << std::endl;
-    std::cout << "Permission: " << permission << std::endl;
-  }
-
-  void printMulitLines() {
-    std::cout << "Id: " << id << std::endl;
-    std::cout << "Priority: " << priority << std::endl;
-    std::cout << "Actor: " << actor << std::endl;
-    std::cout << "Object: " << object << std::endl;
-    std::cout << "Permission: " << permission << std::endl;
-  }
 
 private:
-  int id;
-  int priority;
+  Hierarchy actors;
+  Hierarchy objects;
+  std::vector<Rule> rules;
   int actor;
   int object;
-  bool permission;
-};
-
-private:
-  enum { A, B, C, D, E, F, G, N };
-  // const int num_vertices = N;
-  const int nVertices = 7;
-  // Declare actors and objects graphs
-  Graph actorsHierarchy, objectsHierarchy;
-  adjacency_list <> actorsHierarchyClosure, objectsHierarchyClosure;
-  // Graph_t actorsHierarchyClosure, objectsHierarchyClosure;
-  // adjacency_list <listS, listS, directedS> actorsHierarchyClosure, objectsHierarchyClosure;
-
-  std::vector<Edge> actorsEdgeArray, objectsEdgeArray;
-
-  Graph_t actorsHierarchy_t, objectsHierarchy_t;
-  std::vector <vertex_t> actorsVerts, objectsVerts;
-
-  std::vector<Rule> rules, effectiveRules;
 public:
-  GraphTest() : actorsHierarchy(nVertices), objectsHierarchy(nVertices),
-                actorsVerts(nVertices), objectsVerts(nVertices) {
-
-    char name[] = "abcdefgh";
-
-    actorsEdgeArray.push_back(Edge(A, B));
-    actorsEdgeArray.push_back(Edge(A, C));
-    actorsEdgeArray.push_back(Edge(B, D));
-    actorsEdgeArray.push_back(Edge(B, E));
-    actorsEdgeArray.push_back(Edge(C, F));
-    actorsEdgeArray.push_back(Edge(C, G));
-    // // add the edges to the graph object
-    for (unsigned int i = 0; i < actorsEdgeArray.size(); ++i) {
-      add_edge(actorsEdgeArray[i].first, actorsEdgeArray[i].second, actorsHierarchy);
+  GraphTest() {
+    int nbActors = 7;
+    int nbObjects = 4;
+    for(int i=0; i< nbActors; i++) {
+      actors.addVertex(i);
     }
-
-    // // Declare objects graph
-    objectsEdgeArray.push_back(Edge(A, B));
-    objectsEdgeArray.push_back(Edge(A, C));
-    objectsEdgeArray.push_back(Edge(B, D));
-    objectsEdgeArray.push_back(Edge(B, E));
-    objectsEdgeArray.push_back(Edge(C, F));
-    objectsEdgeArray.push_back(Edge(C, G));
-
-    for (unsigned int i = 0; i < objectsEdgeArray.size(); ++i) {
-      add_edge(objectsEdgeArray[i].first, objectsEdgeArray[i].second, objectsHierarchy);
-
+    for(int i=0; i< nbObjects; i++) {
+      objects.addVertex(i);
     }
+    actors.addEdge(0, 1);
+    actors.addEdge(0, 2);
+    actors.addEdge(1, 3);
+    actors.addEdge(1, 4);
+    actors.addEdge(2, 5);
+    actors.addEdge(2, 6);
 
-    for (int i = 0; i < 7; ++i) {
-      actorsVerts[i] = add_vertex(Index(i, Name('a' + i)), actorsHierarchy_t);
-    }
+    objects.addEdge(0, 1);
+    objects.addEdge(0, 2);
+    objects.addEdge(1, 3);
+    objects.addEdge(2, 3);
+    actors.saveGraphviz("actorsGraphviz");
+    objects.saveGraphviz("objectsGraphviz");
 
-    for (int i = 0; i < 4; ++i) {
-      objectsVerts[i] = add_vertex(Index(i, Name('a' + i)), objectsHierarchy_t);
-    }
+    rules.push_back(Rule(1, 0, 0, 3, false));
+    rules.push_back(Rule(2, 0, 2, 1, false));
+    rules.push_back(Rule(3, 0, 2, 2, true));
+    rules.push_back(Rule(4, 0, 5, 3, false));
+
+    /**
+     * Avoid rule id = 0
+     * All values are initialized to 0
+     */
+    std::vector<int> actorsRules(nbActors);
+    actorsRules[0] = 1;
+    actorsRules[2] = 1;
+    actorsRules[5] = 1;
+
+    /**
+     * List of ancestors
+     */
+    // actor = 3;
+    // object = 5;
+
+    adjacency_list<> closure = actors.getTransitiveClosure();
+
+    actors.printVertices();
 
 
-    add_edge(actorsVerts[0], actorsVerts[1], actorsHierarchy_t);
-    add_edge(actorsVerts[0], actorsVerts[2], actorsHierarchy_t);
-    add_edge(actorsVerts[1], actorsVerts[3], actorsHierarchy_t);
-    add_edge(actorsVerts[1], actorsVerts[4], actorsHierarchy_t);
-    add_edge(actorsVerts[2], actorsVerts[5], actorsHierarchy_t);
-    add_edge(actorsVerts[2], actorsVerts[6], actorsHierarchy_t);
-
-    add_edge(objectsVerts[0], objectsVerts[1], objectsHierarchy_t);
-    add_edge(objectsVerts[0], objectsVerts[2], objectsHierarchy_t);
-    add_edge(objectsVerts[1], objectsVerts[3], objectsHierarchy_t);
-    add_edge(objectsVerts[2], objectsVerts[3], objectsHierarchy_t);
-
-    // // Declare rules
-    // Rule r(1, 0, 1, 2, false);
-    rules.push_back(Rule(1, 0, 1, 4, false));
-    rules.push_back(Rule(1, 0, 3, 2, false));
-    rules.push_back(Rule(1, 0, 3, 3, true));
-    rules.push_back(Rule(1, 0, 6, 4, false));
-
-    // rules.push
+    graph_traits <adjacency_list <> >::vertex_iterator i, end;
+    graph_traits <adjacency_list <> >::adjacency_iterator  ai, a_end;
+    property_map <adjacency_list <>, vertex_index_t >::type
+      index_map = get(vertex_index, closure);
 
 
-    transitive_closure(actorsHierarchy_t, actorsHierarchyClosure);
-    std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
-    print_graph(actorsHierarchyClosure, name);
-
-    transitive_closure(objectsHierarchy_t, objectsHierarchyClosure);
-    std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
-    print_graph(objectsHierarchyClosure, name);
-
-    std::ofstream actorsHierarchyOut("build/actorsHierarchyClosure.dot");
-    write_graphviz(actorsHierarchyOut, actorsHierarchyClosure, make_label_writer(name));
-
-    std::ofstream objectsHierarchyOut("build/objectsHierarchyClosure.dot");
-    write_graphviz(objectsHierarchyOut, objectsHierarchyClosure, make_label_writer(name));
-
-    setEffectiveRules();
-
-    for(unsigned int i = 0; i < effectiveRules.size(); i++) {
-      effectiveRules[i].print();
-    }
-
-    {
-      graph_traits <Graph_t>::vertex_iterator i, end;
-      graph_traits <Graph_t>::adjacency_iterator  ai, a_end;
-      property_map < Graph_t, vertex_index_t >::type
-        index_map = get(vertex_index, actorsHierarchy_t);
-
-      for (boost::tie(i, end) = vertices(actorsHierarchy_t); i != end; ++i) {
-        std::cout << name[get(index_map, *i)];
-        boost::tie(ai, a_end) = adjacent_vertices(*i, actorsHierarchy_t);
-        if (ai == a_end)
-          std::cout << " has no children";
-        else
-          std::cout << " is the parent of ";
-        for (; ai != a_end; ++ai) {
-          std::cout << name[get(index_map, *ai)];
-          if (boost::next(ai) != a_end)
-            std::cout << ", ";
-        }
-        std::cout << std::endl;
-      }
-    }
-
-    {
-      graph_traits <adjacency_list <> >::vertex_iterator i, end;
-      graph_traits <adjacency_list <> >::adjacency_iterator  ai, a_end;
-      property_map < adjacency_list <>, vertex_index_t >::type
-        index_map = get(vertex_index, actorsHierarchyClosure);
-
-      for (boost::tie(i, end) = vertices(actorsHierarchyClosure); i != end; ++i) {
-        std::cout << name[get(index_map, *i)];
-        boost::tie(ai, a_end) = adjacent_vertices(*i, actorsHierarchyClosure);
-        if (ai == a_end)
-          std::cout << " has no children";
-        else
-          std::cout << " is the parent of ";
-        for (; ai != a_end; ++ai) {
-          std::cout << name[get(index_map, *ai)];
-          if (boost::next(ai) != a_end)
-            std::cout << ", ";
-        }
-        std::cout << std::endl;
-      }
-    }
+    // for (boost::tie(i, end) = vertices(actors); i != end; ++i) {
+    //   std::cout << name[get(index_map, *i)];
+    //   boost::tie(ai, a_end) = adjacent_vertices(*i, actors);
+    //   if (ai == a_end) {
+    //     std::cout << " has no children";
+    //   } else {
+    //     std::cout << " is the parent of ";
+    //   }
+    //   for (; ai != a_end; ++ai) {
+    //     std::cout << name[get(index_map, *ai)];
+    //     if (boost::next(ai) != a_end) {
+    //       std::cout << ", ";
+    //     }
+    //   }
+    //   std::cout << std::endl;
+    // }
 
 
   }
 
 
-
-  bool accessToObject(int actor, int object) {
-    return true;
-  }
-
-  void setEffectiveRules(int actor = 0, int object = 0) {
-    // if not exist actor or object throw an error;
-    for(unsigned int i=0; i<rules.size(); i++) {
-      effectiveRules.push_back(rules[i]);
-    }
-  }
-
-  // http://en.wikipedia.org/wiki/Tarjan%27s_off-line_lowest_common_ancestors_algorithm#CITEREFGabowTarjan1983
-
-  // vector<vertex_t> getAncestors(vertex_t v, Graph_t) {
+  /**
+   * Every rules that aim to this actor or his ancestors
+   */
+  // std::vector<Rule> effectiveRules() {
 
   // }
+
 
 
   static CppUnit::Test *suite() {
@@ -240,85 +136,7 @@ public:
 protected:
 
   void test1() {
-    std::cout << std::endl;
-
-
-
-
-  //   main = new Main();
-  //   resGraph = new OrientedGraph();
-  //   resGraph.set_table_name('Res test');
-  //   resGraph.add_node('CHUS', null);
-  //   resGraph.add_node('Laboratoires', 'CHUS');
-  //   resGraph.add_node('Microbio', 'Laboratoires');
-  //   resGraph.add_node('Hémato', 'Laboratoires');
-  //   resGraph.add_node('VIH', 'Hémato');
-  //   resGraph.add_node('Potassium', 'Hémato');
-  //   resGraph.add_node('Strep', 'Microbio');
-  //   resGraph.set_root('CHUS');
-  //   main.set_resources_graph(resGraph);
-
-  //   subjGraph = new OrientedGraph();
-  //   subjGraph.set_table_name('Sub test');
-  //   subjGraph.add_node('CHUS', null);
-  //   subjGraph.add_node('cardiologie', 'CHUS');
-  //   subjGraph.add_node('urgence', 'CHUS');
-  //   subjGraph.add_node('DoctorBernard', 'cardiologie');
-  //   subjGraph.add_node('DoctorBernard', 'urgence');
-  //   subjGraph.set_root('CHUS');
-  //   main.set_subjects_graph(subjGraph);
-
-  //   rules.push(new Rule(1, 1, 'cardiologie', 'Hémato', modality.prohibition, null, ''));
-  //   rules.push(new Rule(2, 1, 'urgence', 'Hémato', modality.permission, null, ''));
-  //   rules.push(new Rule(3, 1, 'DoctorBernard', 'CHUS', modality.prohibition, null, ''));
-  //   rules.push(new Rule(4, 1, 'DoctorBernard', 'VIH', modality.prohibition, null, ''));
-
-  //   main.set_rules(rules);
-  //   done();
-  // });
-
-  // it('applicable rules', function (done) {
-  //   applicableRules = main.applicableRules(subject, resource);
-  //   Object.keys(applicableRules).should.eql(['1', '2', '3', '4']);
-  //   done();
-  // });
-
-
-
-
-
-
-
-
-
-
-
-    // /* ACCESSING THE VERTEX SET */
-    // typedef graph_traits<Graph>::vertex_descriptor Vertex;
-
-    // // get the property map for vertex indices
-    // typedef property_map<Graph, vertex_index_t>::type IndexMap;
-    // IndexMap index = get(vertex_index, g);
-
-    // std::cout << "vertices(g) = ";
-    // typedef graph_traits<Graph>::vertex_iterator vertex_iter;
-    // std::pair<vertex_iter, vertex_iter> vp;
-    // for (vp = vertices(g); vp.first != vp.second; ++vp.first) {
-    //   Vertex v = *vp.first;
-    //   std::cout << index[v] <<  " ";
-    // }
-    // std::cout << std::endl;
-
-    // /* ACCESSING THE EDGE SET */
-    // std::cout << "edges(g) = ";
-    // graph_traits<Graph>::edge_iterator ei, ei_end;
-    // for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    //     std::cout << "(" << index[source(*ei, g)]
-    //               << "," << index[target(*ei, g)] << ") ";
-    // std::cout << std::endl;
-
-
-
+    std::cout << "start" << std::endl;
 
   }
 };

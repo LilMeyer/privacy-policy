@@ -9,6 +9,9 @@ policy:
 	./policy_test
 	dot build/actorsHierarchyClosure.dot -Tpng -o build/actorsHierarchyClosure.png
 	dot build/objectsHierarchyClosure.dot -Tpng -o build/objectsHierarchyClosure.png
+	dot build/actorsGraphviz.dot -Tpng -o build/actorsGraphviz.png
+	dot build/objectsGraphviz.dot -Tpng -o build/objectsGraphviz.png
+
 
 travis:
 	scons mode=debug && make generate_tests && make run_tests
@@ -23,4 +26,4 @@ generate_tests:
 
 test: generate_tests all_tests
 
-.PHONY: all
+.PHONY: all policy
