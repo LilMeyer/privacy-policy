@@ -26,6 +26,20 @@
 
 using namespace boost;
 
+template <class T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+  out << "[";
+  size_t last = v.size() - 1;
+  for(size_t i = 0; i < v.size(); ++i) {
+    out << v[i];
+    if (i != last) {
+      out << ", ";
+    }
+  }
+  out << "]";
+  return out;
+}
+
 class GraphTest : public CppUnit::TestFixture {
 
 private:
@@ -82,11 +96,9 @@ public:
 
     actors.printVertices();
 
+    std::cout << "Vertices from 0" << std::endl;
+    std::cout << actors.adjacentIndexVertices(0);
 
-    graph_traits <adjacency_list <> >::vertex_iterator i, end;
-    graph_traits <adjacency_list <> >::adjacency_iterator  ai, a_end;
-    property_map <adjacency_list <>, vertex_index_t >::type
-      index_map = get(vertex_index, closure);
 
 
     // for (boost::tie(i, end) = vertices(actors); i != end; ++i) {

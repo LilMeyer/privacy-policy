@@ -65,15 +65,15 @@ public:
   }
 
   void printVertices() {
-    property_map < Graph, vertex_index_t >::type
+    property_map <Graph, vertex_index_t>::type
       index_map = get(vertex_index, graph);
-    graph_traits <Graph >::adjacency_iterator ai, a_end;
+    graph_traits <Graph>::adjacency_iterator ai, a_end;
 
     std::cout << "List of vertices : " << std::endl;
     int index;
-    for(tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi) {
+    for(boost::tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi) {
       index = get(index_map, *vi);
-      std::cout << "Id: " << index << " " << name[index];
+      std::cout << index << " " << name[index];
       std::cout << "->";
       boost::tie(ai, a_end) = adjacent_vertices(*vi, graph);
       if (ai == a_end) {
@@ -91,7 +91,26 @@ public:
     }
   }
 
+
+  /**
+   * Index to vertex_descriptor : vertex(index, graph)
+   * vertex_descripor to index : get(index_map, vertexIt)
+   */
   std::vector<int> adjacentIndexVertices(int index) {
+    std::vector<int> v;
+    property_map <Graph, vertex_index_t>::type
+      index_map = get(vertex_index, graph);
+    Graph::vertex_descriptor vertexIt = vertex(index, graph);
+
+    graph_traits <Graph>::adjacency_iterator ai, a_end;
+    boost::tie(ai, a_end) = adjacent_vertices(vertexIt, graph);
+    if (ai == a_end) {
+      return v;
+    }
+    for (; ai != a_end; ++ai) {
+      v.push_back(get(index_map, *ai));
+    }
+    return v;
   }
 
   void transitiveClosure() {

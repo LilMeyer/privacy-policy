@@ -56,7 +56,7 @@ libs = [
     'boost_system'
 ]
 
-files = glob.glob('src/core/*.cpp')
+files = glob.glob('src/core/*_test.cpp')
 
 for file in files:
     t = env.Program(target=file[9:-4], source=[file], LIBS=libs)
