@@ -27,24 +27,28 @@ typedef typename graph_traits <Graph>::vertex_descriptor Vertex;
 typedef graph_traits <Graph>::vertex_descriptor vertex_t;
 public:
   Hierarchy() {
-    name[0] = "ab";
-    name[1] = "b";
-    name[2] = "c";
-    name[3] = "d";
-    name[4] = "e";
-    name[5] = "f";
-    name[6] = "g";
-    name[7] = "h";
-    name[8] = "i";
-    name[9] = "j";
-    name[10] = "k";
-    name[11] = "l";
+    name[0] = "0";
+    name[1] = "1";
+    name[2] = "2";
+    name[3] = "3";
+    name[4] = "4";
+    name[5] = "5";
+    name[6] = "6";
+    name[7] = "7";
+    name[8] = "8";
+    name[9] = "9";
+    name[10] = "10";
+    name[11] = "11";
+    name[12] = "12";
+    name[13] = "13";
+    name[14] = "14";
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Hierarchy& h);
 
   void addVertex(int i) {
     verticesMap[i] = add_vertex(Index(i, Name('a' + i)), graph);
+    verticesMapReverse[i] = add_vertex(Index(i, Name('a' + i)), graphReverse);
   }
 
   void addVertex(int i, std::string label) {
@@ -62,6 +66,7 @@ public:
       throw std::invalid_argument("Can't find vertex");
     }
     add_edge(vertexItI->second, vertexItJ->second, graph);
+    add_edge(vertexItJ->second, vertexItI->second, graphReverse);
   }
 
   void printVertices() {
@@ -113,8 +118,45 @@ public:
     return v;
   }
 
+  std::vector<int> inAdjacentIndexVertices(int index) {
+    std::vector<int> v;
+    property_map <Graph, vertex_index_t>::type
+      index_map = get(vertex_index, graphReverse);
+    Graph::vertex_descriptor vertexIt = vertex(index, graphReverse);
+
+    graph_traits <Graph>::adjacency_iterator ai, a_end;
+    boost::tie(ai, a_end) = adjacent_vertices(vertexIt, graphReverse);
+    if (ai == a_end) {
+      return v;
+    }
+    for (; ai != a_end; ++ai) {
+      v.push_back(get(index_map, *ai));
+    }
+    return v;
+  }
+
+
+  // std::vector<int> inEdgeVertices(int index) {
+  //   std::vector<int> result;
+  //   Graph::in_edge_iterator in_begin, in_end;
+  //   Graph::vertex_descriptor vertexIt = vertex(index, graph);
+  //   boost::tie(in_begin, in_end) = in_edges(vertexIt, graph);
+  //   for (; in_begin != in_end; ++in_begin) {
+  //       std::cout << source(*in_begin, graph) << std::endl;
+  //   }
+  //   // std::cout << std::endl;
+  //   return result;
+  // }
+
+
+
+  bool hasAccess() {
+    return true;
+  }
+
   void transitiveClosure() {
     transitive_closure(graph, closure);
+    transitive_closure(graphReverse, closureReverse);
     std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
     char name[] = "abcdefghij";
     print_graph(closure, name);
@@ -134,13 +176,16 @@ public:
     write_graphviz(out, closure, make_label_writer(name));
   }
 
+std::string name[20];
+Graph graphReverse;
+Graph graph;
 private:
-  std::string name[20];
   graph_traits<Graph>::vertex_iterator vi, vi_end;
-  Graph graph;
   adjacency_list <> closure;
+  adjacency_list <> closureReverse;
   bool isClosureCompute = false;
   std::map<int, vertex_t> verticesMap;
+  std::map<int, vertex_t> verticesMapReverse;
 };
 
 std::ostream& operator<<(std::ostream& os, const Hierarchy& h) {

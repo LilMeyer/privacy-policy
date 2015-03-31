@@ -9,7 +9,6 @@ public:
        const bool permission)
     : id(id), priority(priority), actor(actor), object(object) {}
   friend std::ostream& operator<<(std::ostream& os, const Rule& rule);
-private:
   int id;
   int priority;
   int actor;

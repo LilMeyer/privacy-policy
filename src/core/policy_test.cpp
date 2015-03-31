@@ -81,10 +81,10 @@ public:
      * Avoid rule id = 0
      * All values are initialized to 0
      */
-    std::vector<int> actorsRules(nbActors);
-    actorsRules[0] = 1;
-    actorsRules[2] = 1;
-    actorsRules[5] = 1;
+    // std::vector<int> actorsRules(nbActors);
+    // actorsRules[0] = 1;
+    // actorsRules[2] = 1;
+    // actorsRules[5] = 1;
 
     /**
      * List of ancestors
@@ -94,31 +94,36 @@ public:
 
     adjacency_list<> closure = actors.getTransitiveClosure();
 
+
     actors.printVertices();
 
+    std::ofstream actorsHierarchyOut("build/actorsHierarchyClosure.dot");
+    write_graphviz(actorsHierarchyOut, closure, make_label_writer(actors.name));
+
+
     std::cout << "Vertices from 0" << std::endl;
-    std::cout << actors.adjacentIndexVertices(0);
+    std::cout << actors.adjacentIndexVertices(1) << std::endl;
+    std::cout << actors.inAdjacentIndexVertices(1) << std::endl;
 
+    std::cout << "EffectiveRules:" << effectiveRules(3, 5) << std::endl;
 
+  }
 
-    // for (boost::tie(i, end) = vertices(actors); i != end; ++i) {
-    //   std::cout << name[get(index_map, *i)];
-    //   boost::tie(ai, a_end) = adjacent_vertices(*i, actors);
-    //   if (ai == a_end) {
-    //     std::cout << " has no children";
-    //   } else {
-    //     std::cout << " is the parent of ";
-    //   }
-    //   for (; ai != a_end; ++ai) {
-    //     std::cout << name[get(index_map, *ai)];
-    //     if (boost::next(ai) != a_end) {
-    //       std::cout << ", ";
-    //     }
-    //   }
-    //   std::cout << std::endl;
-    // }
-
-
+  std::vector<int> effectiveRules(int actor, int object) {
+    std::vector<int> result, adjacent = actors.adjacentIndexVertices(actor);
+    int l = rules.size(), m = adjacent.size();
+    for(int i=0; i<l; i++) {
+      if(rules[i].actor == actor) {
+        result.push_back(rules[i].id);
+        continue;
+      }
+      for(int j=0; j<m; j++) {
+        if(adjacent[j] == actor) {
+          result.push_back(rules[i].id);
+        }
+      }
+    }
+    return result;
   }
 
 
