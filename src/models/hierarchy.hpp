@@ -59,6 +59,9 @@ public:
   void addEdge(int i, int j) {
     std::map<int, vertex_t>::const_iterator vertexItI = verticesMap.find(i);
     std::map<int, vertex_t>::const_iterator vertexItJ = verticesMap.find(j);
+    std::map<int, vertex_t>::const_iterator vertexItRI = verticesMapReverse.find(i);
+    std::map<int, vertex_t>::const_iterator vertexItRJ = verticesMapReverse.find(j);
+
     if (vertexItI == verticesMap.end()) {
       throw std::invalid_argument("Can't find vertex");
     }
@@ -66,7 +69,7 @@ public:
       throw std::invalid_argument("Can't find vertex");
     }
     add_edge(vertexItI->second, vertexItJ->second, graph);
-    add_edge(vertexItJ->second, vertexItI->second, graphReverse);
+    add_edge(vertexItRJ->second, vertexItRI->second, graphReverse);
   }
 
   void printVertices() {
@@ -78,9 +81,36 @@ public:
     int index;
     for(boost::tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi) {
       index = get(index_map, *vi);
-      std::cout << index << " " << name[index];
+      std::cout << index << " [" << name[index] << "]";
       std::cout << "->";
       boost::tie(ai, a_end) = adjacent_vertices(*vi, graph);
+      if (ai == a_end) {
+        std::cout << " ()" << std::endl;
+      } else {
+        std::cout << " (";
+        for (; ai != a_end; ++ai) {
+          std::cout << name[get(index_map, *ai)];
+          if (boost::next(ai) != a_end) {
+            std::cout << ", ";
+          }
+        }
+        std::cout << ")" << std::endl;
+      }
+    }
+  }
+
+  void printVerticesReverse() {
+    property_map <Graph, vertex_index_t>::type
+      index_map = get(vertex_index, graphReverse);
+    graph_traits <Graph>::adjacency_iterator ai, a_end;
+
+    std::cout << "List of vertices : " << std::endl;
+    int index;
+    for(boost::tie(vi, vi_end) = vertices(graphReverse); vi != vi_end; ++vi) {
+      index = get(index_map, *vi);
+      std::cout << index << " [" << name[index] << "]";
+      std::cout << "->";
+      boost::tie(ai, a_end) = adjacent_vertices(*vi, graphReverse);
       if (ai == a_end) {
         std::cout << " ()" << std::endl;
       } else {
@@ -170,11 +200,19 @@ public:
     return closure;
   }
 
-  void saveGraphviz(std::string fileName) {
+  void toDotFile(std::string fileName) {
     transitive_closure(graph, closure);
     std::ofstream out("build/" + fileName + ".dot");
     write_graphviz(out, closure, make_label_writer(name));
   }
+
+  void reverseToDotFile(std::string fileName) {
+    transitive_closure(graphReverse, closureReverse);
+    std::ofstream out("build/" + fileName + ".dot");
+    write_graphviz(out, closureReverse, make_label_writer(name));
+  }
+
+
 
 std::string name[20];
 Graph graphReverse;

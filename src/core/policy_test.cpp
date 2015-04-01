@@ -69,13 +69,30 @@ public:
     objects.addEdge(0, 2);
     objects.addEdge(1, 3);
     objects.addEdge(2, 3);
-    actors.saveGraphviz("actorsGraphviz");
-    objects.saveGraphviz("objectsGraphviz");
 
     rules.push_back(Rule(1, 0, 0, 3, false));
     rules.push_back(Rule(2, 0, 2, 1, false));
     rules.push_back(Rule(3, 0, 2, 2, true));
     rules.push_back(Rule(4, 0, 5, 3, false));
+
+    actors.printVertices();
+    actors.printVerticesReverse();
+
+    actors.toDotFile("actorsHierarchyClosure");
+    actors.reverseToDotFile("actorsHierarchyClosureReverse");
+
+    actors.printVertices();
+    actors.printVerticesReverse();
+
+
+    std::cout << "1 adj " << actors.adjacentIndexVertices(1) << std::endl;
+    std::cout << "1 in " << actors.inAdjacentIndexVertices(1) << std::endl;
+    std::cout << "3 adj" << actors.adjacentIndexVertices(3) << std::endl;
+    std::cout << "3 in" << actors.inAdjacentIndexVertices(3) << std::endl;
+
+    std::cout << "EffectiveRules:" << effectiveRules(3, 5) << std::endl;
+
+
 
     /**
      * Avoid rule id = 0
@@ -92,25 +109,17 @@ public:
     // actor = 3;
     // object = 5;
 
-    adjacency_list<> closure = actors.getTransitiveClosure();
+    // actors.printVertices();
 
 
-    actors.printVertices();
-
-    std::ofstream actorsHierarchyOut("build/actorsHierarchyClosure.dot");
-    write_graphviz(actorsHierarchyOut, closure, make_label_writer(actors.name));
+    // std::cout << "Vertices from 0" << std::endl;
 
 
-    std::cout << "Vertices from 0" << std::endl;
-    std::cout << actors.adjacentIndexVertices(1) << std::endl;
-    std::cout << actors.inAdjacentIndexVertices(1) << std::endl;
-
-    std::cout << "EffectiveRules:" << effectiveRules(3, 5) << std::endl;
 
   }
 
   std::vector<int> effectiveRules(int actor, int object) {
-    std::vector<int> result, adjacent = actors.adjacentIndexVertices(actor);
+    std::vector<int> result, adjacent = actors.inAdjacentIndexVertices(actor);
     int l = rules.size(), m = adjacent.size();
     for(int i=0; i<l; i++) {
       if(rules[i].actor == actor) {
