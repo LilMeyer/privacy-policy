@@ -90,8 +90,7 @@ public:
     std::cout << "3 adj" << actors.adjacentIndexVertices(3) << std::endl;
     std::cout << "3 in" << actors.inAdjacentIndexVertices(3) << std::endl;
 
-    std::cout << "EffectiveRules:" << effectiveRules(3, 5) << std::endl;
-
+    std::cout << "EffectiveRules:" << effectiveRules(5, 3) << std::endl;
 
 
     /**
@@ -127,7 +126,8 @@ public:
         continue;
       }
       for(int j=0; j<m; j++) {
-        if(adjacent[j] == actor) {
+        std::cout << adjacent[j] << std::endl;
+        if(adjacent[j] == rules[i].actor) {
           result.push_back(rules[i].id);
         }
       }
@@ -135,6 +135,15 @@ public:
     return result;
   }
 
+
+  std::vector<int> deepestRules(std::vector <int> rules, int actor) {
+    std::vector <int> result;
+    int l = rules.size();
+    // for(int i=0; i<l; i++) {
+    //   rules[i].
+    // }
+    return result;
+  }
 
   /**
    * Every rules that aim to this actor or his ancestors

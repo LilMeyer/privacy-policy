@@ -150,12 +150,12 @@ public:
 
   std::vector<int> inAdjacentIndexVertices(int index) {
     std::vector<int> v;
-    property_map <Graph, vertex_index_t>::type
-      index_map = get(vertex_index, graphReverse);
-    Graph::vertex_descriptor vertexIt = vertex(index, graphReverse);
+    property_map <adjacency_list<>, vertex_index_t>::type
+      index_map = get(vertex_index, closureReverse);
+    adjacency_list<>::vertex_descriptor vertexIt = vertex(index, closureReverse);
 
-    graph_traits <Graph>::adjacency_iterator ai, a_end;
-    boost::tie(ai, a_end) = adjacent_vertices(vertexIt, graphReverse);
+    graph_traits <adjacency_list<> >::adjacency_iterator ai, a_end;
+    boost::tie(ai, a_end) = adjacent_vertices(vertexIt, closureReverse);
     if (ai == a_end) {
       return v;
     }
