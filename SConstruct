@@ -1,6 +1,12 @@
-import os, sys, glob
+import glob
+import os
+import sys
 
-taget_dir = "build"
+import buildscripts.lint
+
+
+
+taget_dir = 'build'
 
 # build mode (debug/release; default to release)
 build_mode = ARGUMENTS.get('mode', 'release')
@@ -57,6 +63,15 @@ libs = [
 ]
 
 files = glob.glob('src/core/*_test.cpp')
+
+
+# --- lint ----
+def doLint( env , target , source ):
+    if not buildscripts.lint.run_lint( [ 'src/core/' ] ):
+        raise Exception( 'lint errors' )
+
+env.Alias( 'lint', [], [ doLint ] )
+env.AlwaysBuild( 'lint' )
 
 for file in files:
     t = env.Program(target=file[9:-4], source=[file], LIBS=libs)

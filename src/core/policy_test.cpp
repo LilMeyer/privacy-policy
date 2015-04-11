@@ -139,8 +139,22 @@ public:
   std::vector<int> deepestRules(std::vector <int> rules, int actor) {
     std::vector <int> result;
     int l = rules.size();
+    if(l<=1) {
+      return rules;
+    }
+    // Rule r [100];
+    // unordered_map<int, Rule, int> uMap;
+    // bool hasOne = false;
     // for(int i=0; i<l; i++) {
-    //   rules[i].
+    //   if(rules[i].actor == actor) {
+    //     if(!hasOne) {
+    //       hasOne = true;
+    //     }
+    //     uMap[i] = rules[i];
+    //   } else {
+
+    //   }
+
     // }
     return result;
   }
