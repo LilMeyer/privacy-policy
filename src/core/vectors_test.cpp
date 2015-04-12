@@ -11,7 +11,6 @@
 #include <vector>
 #include "./../utils/vectors.hpp"
 
-
 #include <cppunit/TestAssert.h>
 #include <cppunit/TestCaller.h>
 #include <cppunit/TestCase.h>

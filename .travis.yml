@@ -20,4 +20,4 @@ install:
 script:
   - scons mode=$BUILD_MODE
   - make generate_tests
-  - make run_tests
+  - make run_all

@@ -3,7 +3,6 @@ import glob
 
 Import('env')
 
-# env.CppUnitTest('money_test2', ['money_test2.cpp'])
 
 files = glob.glob('*_test.cpp')
 for file in files:

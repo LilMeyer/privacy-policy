@@ -131,6 +131,9 @@ protected:
     r = hierarchy.inAdjacentIndexVertices(rootId);
     CPPUNIT_ASSERT(vectorSameValues(v3, r));
 
+    hierarchy.toDotFile("hierarchy_test");
+
+
 
   }
 };

@@ -5,6 +5,7 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
+
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/properties.hpp>
@@ -16,8 +17,6 @@
 #include <boost/graph/is_straight_line_drawing.hpp>
 #include <boost/graph/chrobak_payne_drawing.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
-
-
 
 using namespace boost;
 
