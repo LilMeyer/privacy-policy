@@ -7,11 +7,11 @@ include Makefile_tests
 policy:
 	scons policy_test
 	./policy_test
-	dot build/actorsHierarchyClosure.dot -Tpng -o build/actorsHierarchyClosure.png
-	dot build/objectsHierarchyClosure.dot -Tpng -o build/objectsHierarchyClosure.png
-	dot build/actorsHierarchyClosureReverse.dot -Tpng -o build/actorsHierarchyClosureReverse.png
-	dot build/actorsGraphviz.dot -Tpng -o build/actorsGraphviz.png
-	dot build/objectsGraphviz.dot -Tpng -o build/objectsGraphviz.png
+	# dot build/actorsHierarchyClosure.dot -Tpng -o build/actorsHierarchyClosure.png
+	# dot build/objectsHierarchyClosure.dot -Tpng -o build/objectsHierarchyClosure.png
+	# dot build/actorsHierarchyClosureReverse.dot -Tpng -o build/actorsHierarchyClosureReverse.png
+	# dot build/actorsGraphviz.dot -Tpng -o build/actorsGraphviz.png
+	# dot build/objectsGraphviz.dot -Tpng -o build/objectsGraphviz.png
 
 
 travis:
