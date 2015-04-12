@@ -47,13 +47,29 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const Hierarchy& h);
 
   void addVertex(int i) {
+    /* insert ? */
     verticesMap[i] = add_vertex(Index(i, Name('a' + i)), graph);
     verticesMapReverse[i] = add_vertex(Index(i, Name('a' + i)), graphReverse);
+
+    // Detect if the key already exists !
+    // std::pair<MyMap::iterator, bool> res = map.insert(std::make_pair(key,value));
+    // if ( ! res.second ) {
+    //     cout << "key " <<  key << " already exists "
+    //          << " with value " << (res.first)->second << endl;
+    // } else {
+    //     cout << "created key " << key << " with value " << value << endl;
+    // }
+
   }
 
   void addVertex(int i, std::string label) {
     addVertex(i);
     name[i] = label;
+  }
+
+  void addElement(int i, std::string label) {
+    addVertex(i);
+
   }
 
   void addEdge(int i, int j) {

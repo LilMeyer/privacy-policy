@@ -19,8 +19,11 @@ graph4_test:
 vectors_test:
 	scons vectors_test
 	./vectors_test
+hierarchy_test:
+	scons hierarchy_test
+	./hierarchy_test
 
-all_tests: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test
+all_tests: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test
 
 run_tests:
 	./graph3_test
@@ -30,5 +33,6 @@ run_tests:
 	./bimap_test
 	./graph4_test
 	./vectors_test
+	./hierarchy_test
 
-.PHONY: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test
+.PHONY: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test

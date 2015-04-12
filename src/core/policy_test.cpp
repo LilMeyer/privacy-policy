@@ -47,48 +47,54 @@ private:
   int object;
 public:
   GraphTest() {
-    int nbActors = 7;
-    int nbObjects = 4;
+    int nbActors = 4;
+    int nbObjects = 7;
     for(int i=0; i< nbActors; i++) {
       actors.addVertex(i);
     }
     for(int i=0; i< nbObjects; i++) {
       objects.addVertex(i);
     }
+
     actors.addEdge(0, 1);
     actors.addEdge(0, 2);
     actors.addEdge(1, 3);
-    actors.addEdge(1, 4);
-    actors.addEdge(2, 5);
-    actors.addEdge(2, 6);
+    actors.addEdge(2, 3);
 
     objects.addEdge(0, 1);
     objects.addEdge(0, 2);
     objects.addEdge(1, 3);
-    objects.addEdge(2, 3);
+    objects.addEdge(1, 4);
+    objects.addEdge(2, 5);
+    objects.addEdge(2, 6);
 
-    actorsUmap.insert(std::pair<int, std::string>(0, "Lab"));
-    actorsUmap.insert(std::pair<int, std::string>(1, "Microbio"));
-    actorsUmap.insert(std::pair<int, std::string>(2, "Hemato"));
-    actorsUmap.insert(std::pair<int, std::string>(3, "Strep"));
-    actorsUmap.insert(std::pair<int, std::string>(4, "Test"));
-    actorsUmap.insert(std::pair<int, std::string>(5, "VIH"));
-    actorsUmap.insert(std::pair<int, std::string>(6, "Potassium"));
+    actorsUmap.insert(std::pair<int, std::string>(0, "CHUS"));
+    actorsUmap.insert(std::pair<int, std::string>(1, "Cardiologie"));
+    actorsUmap.insert(std::pair<int, std::string>(2, "Urgence"));
+    actorsUmap.insert(std::pair<int, std::string>(3, "Doctor B"));
 
-    objectsUmap.insert(std::pair<int, std::string>(0, "CHUS"));
-    objectsUmap.insert(std::pair<int, std::string>(1, "Cardiologie"));
-    objectsUmap.insert(std::pair<int, std::string>(2, "Urgence"));
-    objectsUmap.insert(std::pair<int, std::string>(3, "Doctor B"));
+    objectsUmap.insert(std::pair<int, std::string>(0, "Lab"));
+    objectsUmap.insert(std::pair<int, std::string>(1, "Microbio"));
+    objectsUmap.insert(std::pair<int, std::string>(2, "Hemato"));
+    objectsUmap.insert(std::pair<int, std::string>(3, "Strep"));
+    objectsUmap.insert(std::pair<int, std::string>(4, "Test"));
+    objectsUmap.insert(std::pair<int, std::string>(5, "VIH"));
+    objectsUmap.insert(std::pair<int, std::string>(6, "Potassium"));
 
-    rules.push_back(Rule(1, 0, 0, 3, false));
-    rules.push_back(Rule(2, 0, 2, 1, false));
-    rules.push_back(Rule(3, 0, 2, 2, true));
-    rules.push_back(Rule(4, 0, 5, 3, false));
 
-    rulesUmap.insert(std::pair<int, Rule>(1, Rule(1, 0, 0, 3, false)));
-    rulesUmap.insert(std::pair<int, Rule>(2, Rule(2, 0, 2, 1, false)));
-    rulesUmap.insert(std::pair<int, Rule>(3, Rule(3, 0, 2, 2, false)));
-    rulesUmap.insert(std::pair<int, Rule>(4, Rule(4, 0, 5, 3, false)));
+    rules.push_back(Rule(1, 0, 1, 2, false));
+    rules.push_back(Rule(2, 0, 2, 2, false));
+    rules.push_back(Rule(3, 0, 3, 0, true));
+    rules.push_back(Rule(4, 0, 3, 5, false));
+
+    for(int i=0; i<rules.size(); i++) {
+      rulesUmap.insert(std::pair<int, Rule> (rules[i].id, rules[i]));
+    }
+
+    // rulesUmap.insert(std::pair<int, Rule>(1, Rule(1, 0, 3, 0, false)));
+    // rulesUmap.insert(std::pair<int, Rule>(2, Rule(2, 0, 1, 2, false)));
+    // rulesUmap.insert(std::pair<int, Rule>(3, Rule(3, 0, 2, 2, false)));
+    // rulesUmap.insert(std::pair<int, Rule>(4, Rule(4, 0, 3, 5, false)));
 
     actors.printVertices();
     actors.printVerticesReverse();
@@ -105,11 +111,11 @@ public:
     std::cout << "3 adj" << actors.adjacentIndexVertices(3) << std::endl;
     std::cout << "3 in" << actors.inAdjacentIndexVertices(3) << std::endl;
 
-    std::vector<int> effective = effectiveRules(5, 3);
+    std::vector<int> effective = effectiveRules(3, 5);
     std::cout << "EffectiveRules:" << effective << std::endl;
 
 
-    std::cout << "deepestRules:" << deepestRules(effective, 5) << std::endl;
+    std::cout << "deepestRules:" << deepestRules(effective, 3) << std::endl;
 
     /**
      * Avoid rule id = 0
@@ -140,6 +146,7 @@ public:
     std::unordered_map<int, std::string>::const_iterator oIt = objectsUmap.find(object);
     std::cout << "Demande de " << aIt->second << " sur " << oIt->second << std::endl;
     std::vector<int> result, adjacent = actors.inAdjacentIndexVertices(actor);
+    cout << "adjacent " << adjacent << endl;
     int l = rules.size(), m = adjacent.size();
     for(int i=0; i<l; i++) {
       if(rules[i].actor == actor) {
@@ -170,9 +177,18 @@ public:
     }
     // If there is at least one rule on this actor
     for(int i=0; i<l; i++) {
-      if(rules[i] == actor) {
-        result.push_back(rules[i]);
+      /* rIt ne devrait pas être nul */
+      rIt = rulesUmap.find(rules[i]);
+      if(rIt != rulesUmap.end()) {
+        cout << rIt->first << "->" << rIt->second << endl;
+        if(rIt->second.actor == actor) {
+          result.push_back(rules[i]);
+        }
       }
+    }
+
+    if(result.size() > 0) {
+      return result;
     }
 
     // Liste des acteurs ancêtres à actors :
@@ -186,7 +202,7 @@ public:
       if(vectorContains(adjacents, rules[i])) {
         inRange.push_back(rules[i]);
         inRangeAdjacentsUmap.insert(pair<int, std::vector<int> >
-          (rules[i], actors.inAdjacentIndexVertices(rules [i])));
+          (rules[i], actors.inAdjacentIndexVertices(rules[i])));
       }
     }
     cout << "inRange " << inRange << endl;
@@ -194,7 +210,7 @@ public:
     std::vector<int> tmp;
     std::vector<int> toRemove;
     for(it = inRangeAdjacentsUmap.begin(); it != inRangeAdjacentsUmap.end(); it++) {
-      cout << it->first << " ";
+      cout << it->first << ": adjacents=";
       tmp = it->second;
       for(unsigned int i = 0; i < tmp.size(); i++) {
         if(inRangeAdjacentsUmap.find(tmp[i]) != inRangeAdjacentsUmap.end()) {
@@ -206,14 +222,7 @@ public:
       cout << endl;
     }
 
-
-
-
-
-    if(result.size() > 0) {
-      return result;
-    }
-
+    result = vectorDiff(inRange, toRemove);
     return result;
   }
 

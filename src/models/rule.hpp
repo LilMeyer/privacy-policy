@@ -21,7 +21,7 @@ std::ostream& operator<<(std::ostream& os, const Rule& rule) {
   os << " Priority: " << rule.priority;
   os << " Actor: " << rule.actor;
   os << " Object: " << rule.object;
-  os << " Permission: " << rule.permission << std::endl;
+  os << " Permission: " << rule.permission;
   return os;
 }
 
