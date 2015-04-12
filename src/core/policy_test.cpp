@@ -49,24 +49,12 @@ public:
     std::vector<std::string> actorsVector = {
       "CHUS", "Cardiologie", "Urgence", "Doctor B"
     };
-
-    for(unsigned int i = 0; i < actorsVector.size(); i++) {
-      actors.addVertex(actorsVector[i]);
-    }
-
     policy.addActorVertices(actorsVector);
-
 
     std::vector<std::string> objectsVector = {
       "Lab", "Microbio", "Hemato", "Strep", "Test", "VIH", "Potassium"
     };
-
     policy.addObjectVertices(objectsVector);
-
-
-    for(unsigned int i = 0; i < objectsVector.size(); i++) {
-      objects.addVertex(objectsVector[i]);
-    }
 
     std::vector< pair<int, int> > actorsEdges = {
       pair<int, int> (0, 1),
@@ -87,147 +75,29 @@ public:
     policy.addActorsEdges(actorsEdges);
     policy.addObjectsEdges(objectsEdges);
 
-    actors.addEdge(0, 1);
-    actors.addEdge(0, 2);
-    actors.addEdge(1, 3);
-    actors.addEdge(2, 3);
-
-    objects.addEdge(0, 1);
-    objects.addEdge(0, 2);
-    objects.addEdge(1, 3);
-    objects.addEdge(1, 4);
-    objects.addEdge(2, 5);
-    objects.addEdge(2, 6);
-
-
     rules.push_back(Rule(1, 0, 1, 2, false));
     rules.push_back(Rule(2, 0, 2, 2, false));
     rules.push_back(Rule(3, 0, 3, 0, true));
     rules.push_back(Rule(4, 0, 3, 5, false));
 
-    for(unsigned int i=0; i<rules.size(); i++) {
-      rulesUmap.insert(std::pair<int, Rule> (rules[i].id, rules[i]));
-    }
+    policy.addRules(rules);
 
-    // rulesUmap.insert(std::pair<int, Rule>(1, Rule(1, 0, 3, 0, false)));
-    // rulesUmap.insert(std::pair<int, Rule>(2, Rule(2, 0, 1, 2, false)));
-    // rulesUmap.insert(std::pair<int, Rule>(3, Rule(3, 0, 2, 2, false)));
-    // rulesUmap.insert(std::pair<int, Rule>(4, Rule(4, 0, 3, 5, false)));
+    // actors.printVertices();
+    // actors.printVerticesReverse();
 
-    actors.printVertices();
-    actors.printVerticesReverse();
+    // actors.toDotFile("actorsHierarchyClosure");
+    // actors.reverseToDotFile("actorsHierarchyClosureReverse");
 
-    actors.toDotFile("actorsHierarchyClosure");
-    actors.reverseToDotFile("actorsHierarchyClosureReverse");
+    // std::cout << "1 adj " << actors.adjacentIndexVertices(1) << std::endl;
+    // std::cout << "1 in " << actors.inAdjacentIndexVertices(1) << std::endl;
+    // std::cout << "3 adj" << actors.adjacentIndexVertices(3) << std::endl;
+    // std::cout << "3 in" << actors.inAdjacentIndexVertices(3) << std::endl;
 
-
-    std::cout << "1 adj " << actors.adjacentIndexVertices(1) << std::endl;
-    std::cout << "1 in " << actors.inAdjacentIndexVertices(1) << std::endl;
-    std::cout << "3 adj" << actors.adjacentIndexVertices(3) << std::endl;
-    std::cout << "3 in" << actors.inAdjacentIndexVertices(3) << std::endl;
-
-    std::vector<int> effective = effectiveRules(3, 5);
+    std::vector<int> effective = policy.effectiveRules(3, 5);
     std::cout << "EffectiveRules:" << effective << std::endl;
-
-
-    std::cout << "deepestRules:" << deepestRules(effective, 3) << std::endl;
-
-
+    std::cout << "DeepestRules:" << policy.deepestRules(effective, 3) << std::endl;
 
   }
-
-  std::vector<int> effectiveRules(int actor, int object) {
-    bm_type::left_const_iterator aIt = actors.namesBimap.left.find(actor);
-    bm_type::left_const_iterator oIt = objects.namesBimap.left.find(object);
-    std::cout << "Demande de " << aIt->second << " sur " << oIt->second << std::endl;
-    std::vector<int> result, adjacent = actors.inAdjacentIndexVertices(actor);
-    cout << "adjacent " << adjacent << endl;
-    int l = rules.size(), m = adjacent.size();
-    for(int i=0; i<l; i++) {
-      if(rules[i].actor == actor) {
-        result.push_back(rules[i].id);
-        continue;
-      }
-      for(int j=0; j<m; j++) {
-        // std::cout << adjacent[j] << std::endl;
-        if(adjacent[j] == rules[i].actor) {
-          result.push_back(rules[i].id);
-        }
-      }
-    }
-    return result;
-  }
-
-
-  std::vector<int> deepestRules(std::vector <int> rules, int actor) {
-    bm_type::left_const_iterator aIt = actors.namesBimap.left.find(actor);
-    std::unordered_map<int, Rule>::const_iterator rIt;
-    std::unordered_map<int, std::vector<int> >::iterator it, it0;
-    std::cout << "Actor " << aIt->second << "(" << aIt->first << ")" << std::endl;
-
-    std::vector <int> result;
-    int l = rules.size();
-    if(l<=1) {
-      return rules;
-    }
-    // If there is at least one rule on this actor
-    for(int i=0; i<l; i++) {
-      /* rIt ne devrait pas être nul */
-      rIt = rulesUmap.find(rules[i]);
-      if(rIt != rulesUmap.end()) {
-        cout << rIt->first << "->" << rIt->second << endl;
-        if(rIt->second.actor == actor) {
-          result.push_back(rules[i]);
-        }
-      }
-    }
-
-    if(result.size() > 0) {
-      return result;
-    }
-
-    // Liste des acteurs ancêtres à actors :
-    std::vector<int> adjacents = actors.inAdjacentIndexVertices(actor);
-    std::cout << "adjacentIndexVertices" << adjacents << std::endl;
-
-    std::vector<int> inRange;
-    std::unordered_map<int, std::vector<int> > inRangeAdjacentsUmap;
-
-    for(int i=0; i<l; i++) {
-      if(vectorContains(adjacents, rules[i])) {
-        inRange.push_back(rules[i]);
-        inRangeAdjacentsUmap.insert(pair<int, std::vector<int> >
-          (rules[i], actors.inAdjacentIndexVertices(rules[i])));
-      }
-    }
-    cout << "inRange " << inRange << endl;
-    /* Suppression de tous les moins spécifiques !! */
-    std::vector<int> tmp;
-    std::vector<int> toRemove;
-    for(it = inRangeAdjacentsUmap.begin(); it != inRangeAdjacentsUmap.end(); it++) {
-      cout << it->first << ": adjacents=";
-      tmp = it->second;
-      for(unsigned int i = 0; i < tmp.size(); i++) {
-        if(inRangeAdjacentsUmap.find(tmp[i]) != inRangeAdjacentsUmap.end()) {
-          // remove de inrange
-          toRemove.push_back(tmp[i]);
-        }
-        cout << tmp[i] << ",";
-      }
-      cout << endl;
-    }
-
-    result = vectorDiff(inRange, toRemove);
-    return result;
-  }
-
-  /**
-   * Every rules that aim to this actor or his ancestors
-   */
-  // std::vector<Rule> effectiveRules() {
-
-  // }
-
 
 
   static CppUnit::Test *suite() {

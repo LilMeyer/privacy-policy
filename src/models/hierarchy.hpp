@@ -238,9 +238,9 @@ public:
   void transitiveClosure() {
     transitive_closure(graph, closure);
     transitive_closure(graphReverse, closureReverse);
-    std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
-    char name[] = "0123456789";
-    print_graph(closure, name);
+    // std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
+    // char name[] = "0123456789";
+    // print_graph(closure, name);
     isClosureCompute = true;
   }
 

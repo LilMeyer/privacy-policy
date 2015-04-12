@@ -10,6 +10,7 @@
 
 #include "rule.hpp"
 #include "hierarchy.hpp"
+#include "./../utils/vectors.hpp"
 
 /* Order is important ! */
 #include <boost/graph/transitive_closure.hpp>
@@ -26,6 +27,8 @@ using namespace std;
 
 class Policy {
 
+typedef bimap <int, std::string> bm_type;
+typedef std::unordered_map <int, Rule> um_type;
 typedef property <vertex_name_t, char> Name;
 typedef property <vertex_index_t, std::size_t, Name> Index;
 typedef adjacency_list <listS, listS, directedS, Index> Graph;
@@ -71,6 +74,101 @@ public:
   void addRule(Rule& r) {
     rulesM.insert(std::pair<int, Rule>(r.id, r));
   }
+
+  void addRules(std::vector<Rule> v) {
+    int l = v.size();
+    for(int i=0; i<l; i++) {
+      addRule(v[i]);
+    }
+  }
+
+  std::vector<int> effectiveRules(int actor, int object) {
+    bm_type::left_const_iterator aIt = actors.namesBimap.left.find(actor);
+    bm_type::left_const_iterator oIt = objects.namesBimap.left.find(object);
+    std::cout << "Demande de " << aIt->second << " sur " << oIt->second << std::endl;
+    std::vector<int> result, adjacent = actors.inAdjacentIndexVertices(actor);
+    cout << "adjacent " << adjacent << endl;
+    int m = adjacent.size();
+
+    for(um_type::iterator it = rulesM.begin(); it != rulesM.end(); it++) {
+      if(it->second.actor == actor) {
+        result.push_back(it->second.id);
+        continue;
+      }
+      for(int j=0; j<m; j++) {
+        if(adjacent[j] == it->second.actor) {
+          result.push_back(it->second.id);
+        }
+      }
+    }
+    return result;
+  }
+
+
+
+  std::vector<int> deepestRules(std::vector <int> rules, int actor) {
+    bm_type::left_const_iterator aIt = actors.namesBimap.left.find(actor);
+    std::unordered_map<int, Rule>::const_iterator rIt;
+    std::unordered_map<int, std::vector<int> >::iterator it, it0;
+    std::cout << "Actor " << aIt->second << "(" << aIt->first << ")" << std::endl;
+
+    std::vector <int> result;
+    int l = rules.size();
+    if(l<=1) {
+      return rules;
+    }
+    // If there is at least one rule on this actor
+    for(int i=0; i<l; i++) {
+      /* rIt ne devrait pas être nul */
+      rIt = rulesM.find(rules[i]);
+      if(rIt != rulesM.end()) {
+        // cout << rIt->first << "->" << rIt->second << endl;
+        if(rIt->second.actor == actor) {
+          result.push_back(rules[i]);
+        }
+      }
+    }
+
+    if(result.size() > 0) {
+      return result;
+    }
+
+    // Liste des acteurs ancêtres à actors :
+    std::vector<int> adjacents = actors.inAdjacentIndexVertices(actor);
+    std::cout << "adjacentIndexVertices" << adjacents << std::endl;
+
+    std::vector<int> inRange;
+    std::unordered_map<int, std::vector<int> > inRangeAdjacentsUmap;
+
+    for(int i=0; i<l; i++) {
+      if(vectorContains(adjacents, rules[i])) {
+        inRange.push_back(rules[i]);
+        inRangeAdjacentsUmap.insert(pair<int, std::vector<int> >
+          (rules[i], actors.inAdjacentIndexVertices(rules[i])));
+      }
+    }
+    cout << "inRange " << inRange << endl;
+    /* Suppression de tous les moins spécifiques !! */
+    std::vector<int> tmp;
+    std::vector<int> toRemove;
+    for(it = inRangeAdjacentsUmap.begin(); it != inRangeAdjacentsUmap.end(); it++) {
+      cout << it->first << ": adjacents=";
+      tmp = it->second;
+      for(unsigned int i = 0; i < tmp.size(); i++) {
+        if(inRangeAdjacentsUmap.find(tmp[i]) != inRangeAdjacentsUmap.end()) {
+          // remove de inrange
+          toRemove.push_back(tmp[i]);
+        }
+        cout << tmp[i] << ",";
+      }
+      cout << endl;
+    }
+
+    result = vectorDiff(inRange, toRemove);
+    return result;
+  }
+
+
 
   Hierarchy actors;
   Hierarchy objects;
