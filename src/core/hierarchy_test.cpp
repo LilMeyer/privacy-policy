@@ -57,7 +57,52 @@ public:
 protected:
 
   void test1() {
-    hierarchy.addElement(0, "Root");
+    // Redirect cout.
+    streambuf* oldCoutStreamBuf = cout.rdbuf();
+    ostringstream strCout;
+    cout.rdbuf(strCout.rdbuf());
+
+
+    int rootId = 0;
+    string rootName = "Root";
+    hierarchy.addVertex(rootId, rootName);
+    CPPUNIT_ASSERT_EQUAL(rootName, hierarchy.getVertex(rootId));
+    int kingId = hierarchy.addVertex("King");
+    int queenId = hierarchy.addVertex("Queen");
+    int kingSonId = hierarchy.addVertex("KingSon");
+    CPPUNIT_ASSERT_EQUAL(kingId, 1);
+    CPPUNIT_ASSERT_EQUAL(queenId, 2);
+    CPPUNIT_ASSERT_EQUAL(kingSonId, 3);
+    hierarchy.addEdge(rootId, kingId);
+    hierarchy.addEdge(rootId, queenId);
+    hierarchy.addEdge(kingId, kingSonId);
+
+    hierarchy.printVertices();
+
+    string str1 = "List of vertices :\n"
+                 "0 [Root]-> (1, 2)\n"
+                 "1 [King]-> (3)\n"
+                 "2 [Queen]-> ()\n"
+                 "3 [KingSon]-> ()\n";
+    CPPUNIT_ASSERT(str1.compare(strCout.str()) == 0);
+
+    strCout.str("");
+    strCout.clear();
+
+    hierarchy.printVerticesReverse();
+    string str2 = "List of vertices :\n"
+                  "0 [Root]-> ()\n"
+                  "1 [King]-> (0)\n"
+                  "2 [Queen]-> (0)\n"
+                  "3 [KingSon]-> (1)\n";
+
+    CPPUNIT_ASSERT(str2.compare(strCout.str()) == 0);
+
+    // Restore old cout.
+    cout.rdbuf(oldCoutStreamBuf);
+
+    cout << hierarchy.adjacentIndexVertices(kingId) << endl;
+    cout << hierarchy.inAdjacentIndexVertices(kingId) << endl;
 
   }
 };

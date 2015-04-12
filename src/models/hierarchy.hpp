@@ -47,6 +47,9 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const Hierarchy& h);
 
   void addVertex(int i) {
+    if(i>maxId) {
+      maxId = i;
+    }
     /* insert ? */
     verticesMap[i] = add_vertex(Index(i, Name('a' + i)), graph);
     verticesMapReverse[i] = add_vertex(Index(i, Name('a' + i)), graphReverse);
@@ -62,14 +65,28 @@ public:
 
   }
 
-  void addVertex(int i, std::string label) {
+  void addVertex(int i, const std::string label) {
     addVertex(i);
-    name[i] = label;
+    namesUmap.insert(std::pair<int, std::string>(i, label));
   }
 
-  void addElement(int i, std::string label) {
-    addVertex(i);
+  /**
+   * Add a vertex without specifying an id
+   */
+  int addVertex(const std::string label) {
+    int i = ++maxId;
+    addVertex(i, label);
+    return i;
+  }
 
+  std::string getVertex(int i) {
+    std::unordered_map<int, std::string>::iterator it = namesUmap.find(i);
+    if(it == namesUmap.end()) {
+      /* output <- not found */
+      return "";
+    } else {
+      return it->second;
+    }
   }
 
   void addEdge(int i, int j) {
@@ -86,18 +103,20 @@ public:
     }
     add_edge(vertexItI->second, vertexItJ->second, graph);
     add_edge(vertexItRJ->second, vertexItRI->second, graphReverse);
+    isClosureCompute = false;
   }
+
 
   void printVertices() {
     property_map <Graph, vertex_index_t>::type
       index_map = get(vertex_index, graph);
     graph_traits <Graph>::adjacency_iterator ai, a_end;
 
-    std::cout << "List of vertices : " << std::endl;
+    std::cout << "List of vertices :" << std::endl;
     int index;
     for(boost::tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi) {
       index = get(index_map, *vi);
-      std::cout << index << " [" << name[index] << "]";
+      std::cout << index << " [" << namesUmap[index] << "]";
       std::cout << "->";
       boost::tie(ai, a_end) = adjacent_vertices(*vi, graph);
       if (ai == a_end) {
@@ -120,11 +139,11 @@ public:
       index_map = get(vertex_index, graphReverse);
     graph_traits <Graph>::adjacency_iterator ai, a_end;
 
-    std::cout << "List of vertices : " << std::endl;
+    std::cout << "List of vertices :" << std::endl;
     int index;
     for(boost::tie(vi, vi_end) = vertices(graphReverse); vi != vi_end; ++vi) {
       index = get(index_map, *vi);
-      std::cout << index << " [" << name[index] << "]";
+      std::cout << index << " [" << namesUmap[index] << "]";
       std::cout << "->";
       boost::tie(ai, a_end) = adjacent_vertices(*vi, graphReverse);
       if (ai == a_end) {
@@ -148,13 +167,17 @@ public:
    * vertex_descripor to index : get(index_map, vertexIt)
    */
   std::vector<int> adjacentIndexVertices(int index) {
-    std::vector<int> v;
-    property_map <Graph, vertex_index_t>::type
-      index_map = get(vertex_index, graph);
-    Graph::vertex_descriptor vertexIt = vertex(index, graph);
+    if(!isClosureCompute) {
+      transitiveClosure();
+    }
 
-    graph_traits <Graph>::adjacency_iterator ai, a_end;
-    boost::tie(ai, a_end) = adjacent_vertices(vertexIt, graph);
+    std::vector<int> v;
+    property_map <adjacency_list<>, vertex_index_t>::type
+      index_map = get(vertex_index, closure);
+    adjacency_list<>::vertex_descriptor vertexIt = vertex(index, closure);
+
+    graph_traits <adjacency_list<>>::adjacency_iterator ai, a_end;
+    boost::tie(ai, a_end) = adjacent_vertices(vertexIt, closure);
     if (ai == a_end) {
       return v;
     }
@@ -165,6 +188,10 @@ public:
   }
 
   std::vector<int> inAdjacentIndexVertices(int index) {
+    if(!isClosureCompute) {
+      transitiveClosure();
+    }
+
     std::vector<int> v;
     property_map <adjacency_list<>, vertex_index_t>::type
       index_map = get(vertex_index, closureReverse);
@@ -195,7 +222,6 @@ public:
   // }
 
 
-
   bool hasAccess() {
     return true;
   }
@@ -204,7 +230,7 @@ public:
     transitive_closure(graph, closure);
     transitive_closure(graphReverse, closureReverse);
     std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
-    char name[] = "abcdefghij";
+    char name[] = "0123456789";
     print_graph(closure, name);
     isClosureCompute = true;
   }
@@ -229,8 +255,9 @@ public:
   }
 
 
-
+int maxId = 0;
 std::string name[20];
+std::unordered_map<int, std::string> namesUmap;
 Graph graphReverse;
 Graph graph;
 private:
