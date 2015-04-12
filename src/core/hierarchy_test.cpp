@@ -25,11 +25,8 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-// http://www.boost.org/doc/libs/1_57_0/libs/graph/doc/quick_tour.html
-
 using namespace boost;
 using namespace std;
-
 
 class HierarchyTest : public CppUnit::TestFixture {
 
@@ -57,16 +54,14 @@ public:
 protected:
 
   void test1() {
-    // Redirect cout.
-    streambuf* oldCoutStreamBuf = cout.rdbuf();
-    ostringstream strCout;
-    cout.rdbuf(strCout.rdbuf());
-
-
     int rootId = 0;
     string rootName = "Root";
     hierarchy.addVertex(rootId, rootName);
-    CPPUNIT_ASSERT_EQUAL(rootName, hierarchy.getVertex(rootId));
+    CPPUNIT_ASSERT_EQUAL(rootName, hierarchy.getVertexName(rootId));
+    CPPUNIT_ASSERT_EQUAL(rootId, hierarchy.getVertexId(rootName));
+
+    hierarchy.getVertexId("doNotExists");
+
     int kingId = hierarchy.addVertex("King");
     int queenId = hierarchy.addVertex("Queen");
     int kingSonId = hierarchy.addVertex("KingSon");
@@ -76,6 +71,12 @@ protected:
     hierarchy.addEdge(rootId, kingId);
     hierarchy.addEdge(rootId, queenId);
     hierarchy.addEdge(kingId, kingSonId);
+
+
+    // Redirect cout.
+    streambuf* oldCoutStreamBuf = cout.rdbuf();
+    ostringstream strCout;
+    cout.rdbuf(strCout.rdbuf());
 
     hierarchy.printVertices();
 
@@ -101,8 +102,28 @@ protected:
     // Restore old cout.
     cout.rdbuf(oldCoutStreamBuf);
 
-    cout << hierarchy.adjacentIndexVertices(kingId) << endl;
-    cout << hierarchy.inAdjacentIndexVertices(kingId) << endl;
+    std::vector<int> v1 = { 3 };
+    std::vector<int> v2 = { 0 };
+    std::vector<int> v3 = { };
+    std::vector<int> v4 = { 1, 0 };
+    std::vector<int> v5 = { 1, 2, 3 };
+    std::vector<int> r;
+
+    r = hierarchy.adjacentIndexVertices(kingId);
+    CPPUNIT_ASSERT(vectorSameValues(v1, r));
+    r = hierarchy.inAdjacentIndexVertices(kingId);
+    CPPUNIT_ASSERT(vectorSameValues(v2, r));
+
+    r = hierarchy.adjacentIndexVertices(kingSonId);
+    CPPUNIT_ASSERT(vectorSameValues(v3, r));
+    r = hierarchy.inAdjacentIndexVertices(kingSonId);
+    CPPUNIT_ASSERT(vectorSameValues(v4, r));
+
+    r = hierarchy.adjacentIndexVertices(rootId);
+    CPPUNIT_ASSERT(vectorSameValues(v5, r));
+    r = hierarchy.inAdjacentIndexVertices(rootId);
+    CPPUNIT_ASSERT(vectorSameValues(v3, r));
+
 
   }
 };

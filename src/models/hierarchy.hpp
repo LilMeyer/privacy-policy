@@ -16,8 +16,10 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/bimap.hpp>
 
 using namespace boost;
+using namespace std;
 
 class Hierarchy {
 typedef property <vertex_name_t, char> Name;
@@ -25,6 +27,8 @@ typedef property <vertex_index_t, std::size_t, Name> Index;
 typedef adjacency_list <listS, listS, directedS, Index> Graph;
 typedef typename graph_traits <Graph>::vertex_descriptor Vertex;
 typedef graph_traits <Graph>::vertex_descriptor vertex_t;
+typedef bimap< int, std::string> bm_type;
+
 public:
   Hierarchy() {
     name[0] = "0";
@@ -68,6 +72,7 @@ public:
   void addVertex(int i, const std::string label) {
     addVertex(i);
     namesUmap.insert(std::pair<int, std::string>(i, label));
+    namesBimap.insert(bm_type::value_type(i, label));
   }
 
   /**
@@ -79,14 +84,16 @@ public:
     return i;
   }
 
-  std::string getVertex(int i) {
-    std::unordered_map<int, std::string>::iterator it = namesUmap.find(i);
-    if(it == namesUmap.end()) {
-      /* output <- not found */
-      return "";
-    } else {
-      return it->second;
-    }
+  std::string getVertexName(int i) {
+    // bm_type::left_const_iterator it;
+    // it = namesBimap.left.find(i);
+    return namesBimap.left.find(i)->second;
+  }
+
+  int getVertexId(std::string str) {
+    // bm_type::right_const_iterator it;
+    // it = namesBimap.right.find(str);
+    return namesBimap.right.find(str)->second;
   }
 
   void addEdge(int i, int j) {
@@ -96,9 +103,11 @@ public:
     std::map<int, vertex_t>::const_iterator vertexItRJ = verticesMapReverse.find(j);
 
     if (vertexItI == verticesMap.end()) {
+      cout << "Vertex " << i << endl;
       throw std::invalid_argument("Can't find vertex");
     }
     if (vertexItJ == verticesMap.end()) {
+      cout << "Vertex " << j << endl;
       throw std::invalid_argument("Can't find vertex");
     }
     add_edge(vertexItI->second, vertexItJ->second, graph);
@@ -116,7 +125,7 @@ public:
     int index;
     for(boost::tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi) {
       index = get(index_map, *vi);
-      std::cout << index << " [" << namesUmap[index] << "]";
+      std::cout << index << " [" << namesBimap.left.find(index)->second << "]";
       std::cout << "->";
       boost::tie(ai, a_end) = adjacent_vertices(*vi, graph);
       if (ai == a_end) {
@@ -143,7 +152,7 @@ public:
     int index;
     for(boost::tie(vi, vi_end) = vertices(graphReverse); vi != vi_end; ++vi) {
       index = get(index_map, *vi);
-      std::cout << index << " [" << namesUmap[index] << "]";
+      std::cout << index << " [" << namesBimap.left.find(index)->second << "]";
       std::cout << "->";
       boost::tie(ai, a_end) = adjacent_vertices(*vi, graphReverse);
       if (ai == a_end) {
@@ -255,9 +264,10 @@ public:
   }
 
 
-int maxId = 0;
+int maxId = -1;
 std::string name[20];
 std::unordered_map<int, std::string> namesUmap;
+bm_type namesBimap;
 Graph graphReverse;
 Graph graph;
 private:

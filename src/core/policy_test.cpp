@@ -7,8 +7,8 @@
 
 #include "./../models/rule.hpp"
 #include "./../models/hierarchy.hpp"
+#include "./../models/policy.hpp"
 #include "./../utils/vectors.hpp"
-#include "policy.cpp"
 
 /* Order is important ! */
 #include <boost/graph/transitive_closure.hpp>
@@ -31,30 +31,61 @@ using namespace boost;
 using namespace std;
 
 
-
-
 class GraphTest : public CppUnit::TestFixture {
+typedef bimap< int, std::string> bm_type;
 
 private:
+  Policy policy;
   Hierarchy actors;
   Hierarchy objects;
   std::vector<Rule> rules;
   /* TODO: change to bimap et à intégrer dans Hierarchy !! */
-  std::unordered_map<int, string> actorsUmap;
-  std::unordered_map<int, string> objectsUmap;
   std::unordered_map<int, Rule> rulesUmap;
   int actor;
   int object;
 public:
   GraphTest() {
-    int nbActors = 4;
-    int nbObjects = 7;
-    for(int i=0; i< nbActors; i++) {
-      actors.addVertex(i);
+
+    std::vector<std::string> actorsVector = {
+      "CHUS", "Cardiologie", "Urgence", "Doctor B"
+    };
+
+    for(unsigned int i = 0; i < actorsVector.size(); i++) {
+      actors.addVertex(actorsVector[i]);
     }
-    for(int i=0; i< nbObjects; i++) {
-      objects.addVertex(i);
+
+    policy.addActorVertices(actorsVector);
+
+
+    std::vector<std::string> objectsVector = {
+      "Lab", "Microbio", "Hemato", "Strep", "Test", "VIH", "Potassium"
+    };
+
+    policy.addObjectVertices(objectsVector);
+
+
+    for(unsigned int i = 0; i < objectsVector.size(); i++) {
+      objects.addVertex(objectsVector[i]);
     }
+
+    std::vector< pair<int, int> > actorsEdges = {
+      pair<int, int> (0, 1),
+      pair<int, int> (0, 2),
+      pair<int, int> (1, 3),
+      pair<int, int> (2, 3)
+    };
+
+    std::vector< pair<int, int> > objectsEdges = {
+      pair<int, int> (0, 1),
+      pair<int, int> (0, 2),
+      pair<int, int> (1, 3),
+      pair<int, int> (1, 4),
+      pair<int, int> (2, 5),
+      pair<int, int> (2, 6)
+    };
+
+    policy.addActorsEdges(actorsEdges);
+    policy.addObjectsEdges(objectsEdges);
 
     actors.addEdge(0, 1);
     actors.addEdge(0, 2);
@@ -68,26 +99,13 @@ public:
     objects.addEdge(2, 5);
     objects.addEdge(2, 6);
 
-    actorsUmap.insert(std::pair<int, std::string>(0, "CHUS"));
-    actorsUmap.insert(std::pair<int, std::string>(1, "Cardiologie"));
-    actorsUmap.insert(std::pair<int, std::string>(2, "Urgence"));
-    actorsUmap.insert(std::pair<int, std::string>(3, "Doctor B"));
-
-    objectsUmap.insert(std::pair<int, std::string>(0, "Lab"));
-    objectsUmap.insert(std::pair<int, std::string>(1, "Microbio"));
-    objectsUmap.insert(std::pair<int, std::string>(2, "Hemato"));
-    objectsUmap.insert(std::pair<int, std::string>(3, "Strep"));
-    objectsUmap.insert(std::pair<int, std::string>(4, "Test"));
-    objectsUmap.insert(std::pair<int, std::string>(5, "VIH"));
-    objectsUmap.insert(std::pair<int, std::string>(6, "Potassium"));
-
 
     rules.push_back(Rule(1, 0, 1, 2, false));
     rules.push_back(Rule(2, 0, 2, 2, false));
     rules.push_back(Rule(3, 0, 3, 0, true));
     rules.push_back(Rule(4, 0, 3, 5, false));
 
-    for(int i=0; i<rules.size(); i++) {
+    for(unsigned int i=0; i<rules.size(); i++) {
       rulesUmap.insert(std::pair<int, Rule> (rules[i].id, rules[i]));
     }
 
@@ -102,9 +120,6 @@ public:
     actors.toDotFile("actorsHierarchyClosure");
     actors.reverseToDotFile("actorsHierarchyClosureReverse");
 
-    actors.printVertices();
-    actors.printVerticesReverse();
-
 
     std::cout << "1 adj " << actors.adjacentIndexVertices(1) << std::endl;
     std::cout << "1 in " << actors.inAdjacentIndexVertices(1) << std::endl;
@@ -117,33 +132,13 @@ public:
 
     std::cout << "deepestRules:" << deepestRules(effective, 3) << std::endl;
 
-    /**
-     * Avoid rule id = 0
-     * All values are initialized to 0
-     */
-    // std::vector<int> actorsRules(nbActors);
-    // actorsRules[0] = 1;
-    // actorsRules[2] = 1;
-    // actorsRules[5] = 1;
-
-    /**
-     * List of ancestors
-     */
-    // actor = 3;
-    // object = 5;
-
-    // actors.printVertices();
-
-
-    // std::cout << "Vertices from 0" << std::endl;
-
 
 
   }
 
   std::vector<int> effectiveRules(int actor, int object) {
-    std::unordered_map<int, std::string>::const_iterator aIt = actorsUmap.find(actor);
-    std::unordered_map<int, std::string>::const_iterator oIt = objectsUmap.find(object);
+    bm_type::left_const_iterator aIt = actors.namesBimap.left.find(actor);
+    bm_type::left_const_iterator oIt = objects.namesBimap.left.find(object);
     std::cout << "Demande de " << aIt->second << " sur " << oIt->second << std::endl;
     std::vector<int> result, adjacent = actors.inAdjacentIndexVertices(actor);
     cout << "adjacent " << adjacent << endl;
@@ -165,7 +160,7 @@ public:
 
 
   std::vector<int> deepestRules(std::vector <int> rules, int actor) {
-    std::unordered_map<int, std::string>::const_iterator aIt = actorsUmap.find(actor);
+    bm_type::left_const_iterator aIt = actors.namesBimap.left.find(actor);
     std::unordered_map<int, Rule>::const_iterator rIt;
     std::unordered_map<int, std::vector<int> >::iterator it, it0;
     std::cout << "Actor " << aIt->second << "(" << aIt->first << ")" << std::endl;
