@@ -1,8 +1,7 @@
-all:
-	scons
-	./build/main
-
 include Makefile_tests
+
+make_all:
+	scons
 
 policy:
 	scons policy_test
@@ -15,7 +14,7 @@ policy:
 
 
 travis:
-	scons mode=debug && make generate_tests && make run_tests
+	scons mode=debug && make generate_tests && make run_all
 
 clean:
 	rm -f *_test

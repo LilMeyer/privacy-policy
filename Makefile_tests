@@ -1,38 +1,45 @@
 graph3_test:
-	scons graph3_test
-	./graph3_test
+	scons build/release/src/bin/graph3_test
+	./build/release/src/bin/graph3_test
+
 graph1_test:
-	scons graph1_test
-	./graph1_test
+	scons build/release/src/bin/graph1_test
+	./build/release/src/bin/graph1_test
+
 policy_test:
-	scons policy_test
-	./policy_test
+	scons build/release/src/bin/policy_test
+	./build/release/src/bin/policy_test
+
 graph2_test:
-	scons graph2_test
-	./graph2_test
+	scons build/release/src/bin/graph2_test
+	./build/release/src/bin/graph2_test
+
 bimap_test:
-	scons bimap_test
-	./bimap_test
+	scons build/release/src/bin/bimap_test
+	./build/release/src/bin/bimap_test
+
 graph4_test:
-	scons graph4_test
-	./graph4_test
+	scons build/release/src/bin/graph4_test
+	./build/release/src/bin/graph4_test
+
 vectors_test:
-	scons vectors_test
-	./vectors_test
+	scons build/release/src/bin/vectors_test
+	./build/release/src/bin/vectors_test
+
 hierarchy_test:
-	scons hierarchy_test
-	./hierarchy_test
+	scons build/release/src/bin/hierarchy_test
+	./build/release/src/bin/hierarchy_test
 
 all_tests: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test
 
-run_tests:
-	./graph3_test
-	./graph1_test
-	./policy_test
-	./graph2_test
-	./bimap_test
-	./graph4_test
-	./vectors_test
-	./hierarchy_test
-
+run_all: make_all
+	./build/release/src/bin/graph3_test
+	./build/release/src/bin/graph1_test
+	./build/release/src/bin/policy_test
+	./build/release/src/bin/graph2_test
+	./build/release/src/bin/bimap_test
+	./build/release/src/bin/graph4_test
+	./build/release/src/bin/vectors_test
+	./build/release/src/bin/hierarchy_test
+	
 .PHONY: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test
