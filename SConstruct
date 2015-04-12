@@ -29,7 +29,7 @@ def print_info():
   print_line('CPPPATH'     , ', '.join(env['CPPPATH']))
 
 # --- lint ----
-def doLint( env , target , source ):
+def doLint(env, target, source ):
   if not buildscripts.lint.run_lint( [ 'src/core/' ] ):
     raise Exception( 'lint errors' )
 
@@ -91,7 +91,6 @@ Export('env', 'build_mode')
 
 env.VariantDir('build/release/src', 'src', duplicate=0)
 
-
 # library and tests
 lib = SConscript('build/release/src/SConscript', { 'env': env })
 
@@ -99,9 +98,3 @@ print_info()
 
 env.Alias('lint', [], [ doLint ])
 env.AlwaysBuild('lint')
-
-
-# files = glob.glob('src/core/*_test.cpp')
-
-# for file in files:
-#     t = env.Program(target=file[9:-4], source=[file], LIBS=env['libs'])

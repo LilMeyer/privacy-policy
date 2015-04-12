@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2015 Romain Cotte. All rights reserved.
+ */
+
 #include <boost/thread.hpp>
 // #include <boost/graph/graph_traits.hpp>
 

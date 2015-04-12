@@ -4,8 +4,8 @@ make_all:
 	scons
 
 policy:
-	scons policy_test
-	./policy_test
+	scons build/release/src/bin/policy_test
+	./build/release/src/bin/policy_test
 	# dot build/actorsHierarchyClosure.dot -Tpng -o build/actorsHierarchyClosure.png
 	# dot build/objectsHierarchyClosure.dot -Tpng -o build/objectsHierarchyClosure.png
 	# dot build/actorsHierarchyClosureReverse.dot -Tpng -o build/actorsHierarchyClosureReverse.png
@@ -17,8 +17,6 @@ travis:
 	scons mode=debug && make generate_tests && make run_all
 
 clean:
-	rm -f *_test
-	rm -f main
 	rm -rf build
 
 generate_tests:
