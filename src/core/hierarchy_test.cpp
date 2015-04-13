@@ -87,22 +87,20 @@ protected:
 
     hierarchy.printVertices();
 
-    string str1 = "List of vertices :\n"
-                 "0 [Root]-> (1, 2)\n"
-                 "1 [King]-> (3)\n"
-                 "2 [Queen]-> ()\n"
-                 "3 [KingSon]-> ()\n";
+    string str1 = "0 [Root]->(1, 2)\n"
+                 "1 [King]->(3)\n"
+                 "2 [Queen]->()\n"
+                 "3 [KingSon]->()\n";
     CPPUNIT_ASSERT(str1.compare(strCout.str()) == 0);
 
     strCout.str("");
     strCout.clear();
 
     hierarchy.printVerticesReverse();
-    string str2 = "List of vertices :\n"
-                  "0 [Root]-> ()\n"
-                  "1 [King]-> (0)\n"
-                  "2 [Queen]-> (0)\n"
-                  "3 [KingSon]-> (1)\n";
+    string str2 = "0 [Root]->()\n"
+                  "1 [King]->(0)\n"
+                  "2 [Queen]->(0)\n"
+                  "3 [KingSon]->(1)\n";
 
     CPPUNIT_ASSERT(str2.compare(strCout.str()) == 0);
 
@@ -132,8 +130,6 @@ protected:
     CPPUNIT_ASSERT(vectorSameValues(v3, r));
 
     hierarchy.toDotFile("hierarchy_test");
-
-
 
   }
 };

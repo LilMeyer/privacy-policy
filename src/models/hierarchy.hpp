@@ -3,9 +3,9 @@
 
 #include <iostream>                  // for std::cout
 #include <typeinfo>
+#include <vector>
 #include <utility>                   // for std::pair
 #include <algorithm>                 // for std::for_each
-#include <vector>
 #include <map>
 #include <string>
 
@@ -19,7 +19,7 @@
 #include <boost/bimap.hpp>
 
 using namespace boost;
-using namespace std;
+// using namespace std;
 
 
 struct sample_graph_writer {
@@ -113,11 +113,11 @@ public:
     std::map<int, vertex_t>::const_iterator vertexItRJ = verticesMapReverse.find(j);
 
     if (vertexItI == verticesMap.end()) {
-      cout << "Vertex " << i << endl;
+      std::cout << "Vertex " << i << std::endl;
       throw std::invalid_argument("Can't find vertex");
     }
     if (vertexItJ == verticesMap.end()) {
-      cout << "Vertex " << j << endl;
+      std::cout << "Vertex " << j << std::endl;
       throw std::invalid_argument("Can't find vertex");
     }
     add_edge(vertexItI->second, vertexItJ->second, graph);
@@ -126,58 +126,52 @@ public:
   }
 
 
-  void printVertices() {
+  std::vector<std::pair<int, std::vector<int> > > getVertices(Graph &graph) {
+    std::vector<std::pair<int, std::vector<int> > > result;
+    std::vector<int> tmp;
     property_map <Graph, vertex_index_t>::type
       index_map = get(vertex_index, graph);
     graph_traits <Graph>::adjacency_iterator ai, a_end;
 
-    std::cout << "List of vertices :" << std::endl;
     int index;
     for(boost::tie(vi, vi_end) = vertices(graph); vi != vi_end; ++vi) {
+      tmp.clear();
       index = get(index_map, *vi);
-      std::cout << index << " [" << namesBimap.left.find(index)->second << "]";
-      std::cout << "->";
       boost::tie(ai, a_end) = adjacent_vertices(*vi, graph);
-      if (ai == a_end) {
-        std::cout << " ()" << std::endl;
-      } else {
-        std::cout << " (";
+      if (ai != a_end) {
         for (; ai != a_end; ++ai) {
-          std::cout << name[get(index_map, *ai)];
-          if (boost::next(ai) != a_end) {
-            std::cout << ", ";
-          }
+          tmp.push_back(get(index_map, *ai));
         }
-        std::cout << ")" << std::endl;
       }
+      result.push_back(std::pair<int, std::vector<int> >(index, tmp));
     }
+    return result;
+  }
+
+  void _printVertices(Graph& graph) {
+    std::vector<std::pair<int, std::vector<int> > > result = getVertices(graph);
+    for(unsigned int i=0; i<result.size(); i++) {
+      std::cout << result[i].first << " ["
+           << namesBimap.left.find(result[i].first)->second << "]->";
+      int l = result[i].second.size();
+      std::cout << "(";
+      for(int j=0; j<l; j++) {
+        if(j!=0) {
+          std::cout << ", ";
+        }
+        std::cout << result[i].second[j];
+      }
+      std::cout << ")" << std::endl;
+    }
+
+  }
+
+  void printVertices() {
+    _printVertices(graph);
   }
 
   void printVerticesReverse() {
-    property_map <Graph, vertex_index_t>::type
-      index_map = get(vertex_index, graphReverse);
-    graph_traits <Graph>::adjacency_iterator ai, a_end;
-
-    std::cout << "List of vertices :" << std::endl;
-    int index;
-    for(boost::tie(vi, vi_end) = vertices(graphReverse); vi != vi_end; ++vi) {
-      index = get(index_map, *vi);
-      std::cout << index << " [" << namesBimap.left.find(index)->second << "]";
-      std::cout << "->";
-      boost::tie(ai, a_end) = adjacent_vertices(*vi, graphReverse);
-      if (ai == a_end) {
-        std::cout << " ()" << std::endl;
-      } else {
-        std::cout << " (";
-        for (; ai != a_end; ++ai) {
-          std::cout << name[get(index_map, *ai)];
-          if (boost::next(ai) != a_end) {
-            std::cout << ", ";
-          }
-        }
-        std::cout << ")" << std::endl;
-      }
-    }
+    _printVertices(graphReverse);
   }
 
 
