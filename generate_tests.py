@@ -6,7 +6,8 @@ str = ''
 all = ''
 run_all = '\t'
 
-bin_path = 'build/release/src/bin/'
+# bin_path = 'build/release/src/bin/'
+bin_path = ''
 
 for file in files:
   f = file[9:-4]

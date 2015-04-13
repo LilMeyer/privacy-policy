@@ -21,6 +21,16 @@
 using namespace boost;
 using namespace std;
 
+
+struct sample_graph_writer {
+  void operator()(std::ostream& out) const {
+    out << "graph [bgcolor=lightgrey]" << std::endl;
+    out << "node [shape=circle color=white]" << std::endl;
+    out << "edge [style=dashed]" << std::endl;
+  }
+};
+
+
 class Hierarchy {
 typedef property <vertex_name_t, char> Name;
 typedef property <vertex_index_t, std::size_t, Name> Index;
@@ -112,7 +122,7 @@ public:
     }
     add_edge(vertexItI->second, vertexItJ->second, graph);
     add_edge(vertexItRJ->second, vertexItRI->second, graphReverse);
-    isClosureCompute = false;
+    isClosureComputed = false;
   }
 
 
@@ -176,7 +186,7 @@ public:
    * vertex_descripor to index : get(index_map, vertexIt)
    */
   std::vector<int> adjacentIndexVertices(int index) {
-    if(!isClosureCompute) {
+    if(!isClosureComputed) {
       transitiveClosure();
     }
 
@@ -197,7 +207,7 @@ public:
   }
 
   std::vector<int> inAdjacentIndexVertices(int index) {
-    if(!isClosureCompute) {
+    if(!isClosureComputed) {
       transitiveClosure();
     }
 
@@ -241,24 +251,28 @@ public:
     // std::cout << std::endl << "Graph Transitive closure+:" << std::endl;
     // char name[] = "0123456789";
     // print_graph(closure, name);
-    isClosureCompute = true;
+    isClosureComputed = true;
   }
 
   adjacency_list<> getTransitiveClosure() {
-    if(!isClosureCompute) {
+    if(!isClosureComputed) {
       transitiveClosure();
     }
     return closure;
   }
 
   void toDotFile(std::string fileName) {
-    transitive_closure(graph, closure);
+    if(!isClosureComputed) {
+      transitiveClosure();
+    }
     std::ofstream out("build/" + fileName + ".dot");
     write_graphviz(out, closure, make_label_writer(name));
   }
 
   void reverseToDotFile(std::string fileName) {
-    transitive_closure(graphReverse, closureReverse);
+    if(!isClosureComputed) {
+      transitiveClosure();
+    }
     std::ofstream out("build/" + fileName + ".dot");
     write_graphviz(out, closureReverse, make_label_writer(name));
   }
@@ -274,7 +288,7 @@ private:
   graph_traits<Graph>::vertex_iterator vi, vi_end;
   adjacency_list <> closure;
   adjacency_list <> closureReverse;
-  bool isClosureCompute = false;
+  bool isClosureComputed = false;
   std::map<int, vertex_t> verticesMap;
   std::map<int, vertex_t> verticesMapReverse;
 };

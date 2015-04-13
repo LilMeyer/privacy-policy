@@ -77,8 +77,7 @@ env = Environment(CCFLAGS=ccflags,
 if 'CXX' in os.environ:
     env['CXX'] = os.environ['CXX']
 
-# Why do I have to do that ?
-env['CC'] = 'g++'
+# env['CC'] = 'g++'
 
 
 env['libs'] = [
@@ -88,11 +87,12 @@ env['libs'] = [
 
 Export('env', 'build_mode')
 
-
-env.VariantDir('build/release/src', 'src', duplicate=0)
+# To build binaries in a build folder
+# env.VariantDir('build/release', 'src', duplicate=0)
+# lib = SConscript('build/release/SConscript', { 'env': env })
 
 # library and tests
-lib = SConscript('build/release/src/SConscript', { 'env': env })
+lib = SConscript('src/SConscript', { 'env': env })
 
 print_info()
 
