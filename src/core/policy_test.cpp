@@ -32,27 +32,39 @@
 #include <cppunit/TestSuite.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-// http://www.boost.org/doc/libs/1_57_0/libs/graph/doc/quick_tour.html
-
 using namespace boost;
 using namespace std;
-
 
 class GraphTest : public CppUnit::TestFixture {
 typedef bimap< int, std::string> bm_type;
 
 private:
   Policy policy;
-  Hierarchy actors;
-  Hierarchy objects;
   std::vector<Rule> rules;
-  /* TODO: change to bimap et à intégrer dans Hierarchy !! */
   std::unordered_map<int, Rule> rulesUmap;
   int actor;
   int object;
 public:
   GraphTest() {
+  }
 
+  static CppUnit::Test *suite() {
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("GraphTest");
+
+    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test1 - Unique Solution.",
+            &GraphTest::test1));
+    return suiteOfTests;
+  }
+
+  void setUp() {}
+
+  void tearDown() {}
+
+protected:
+
+  void test1() {
+    Policy policy;
+    std::vector<Rule> rules;
     std::vector<std::string> actorsVector = {
       "CHUS", "Cardiologie", "Urgence", "Doctor B"
     };
@@ -89,43 +101,12 @@ public:
 
     policy.addRules(rules);
 
-    // actors.printVertices();
-    // actors.printVerticesReverse();
-
-    // actors.toDotFile("actorsHierarchyClosure");
-    // actors.reverseToDotFile("actorsHierarchyClosureReverse");
-
-    // std::cout << "1 adj " << actors.adjacentIndexVertices(1) << std::endl;
-    // std::cout << "1 in " << actors.inAdjacentIndexVertices(1) << std::endl;
-    // std::cout << "3 adj" << actors.adjacentIndexVertices(3) << std::endl;
-    // std::cout << "3 in" << actors.inAdjacentIndexVertices(3) << std::endl;
-
     std::vector<int> effective = policy.effectiveRules(3, 5);
+    std::vector<int> deepest = policy.deepestRules(effective, 3);
+    bool isAllowed = policy.sumModalities(deepest);
     std::cout << "EffectiveRules:" << effective << std::endl;
-    std::cout << "DeepestRules:" << policy.deepestRules(effective, 3) << std::endl;
-
-  }
-
-
-  static CppUnit::Test *suite() {
-    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("GraphTest");
-
-    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test1 - Unique Solution.",
-            &GraphTest::test1));
-    return suiteOfTests;
-  }
-
-  /* Setup method */
-  void setUp() {}
-
-  /* Teardown method */
-  void tearDown() {}
-
-protected:
-
-  void test1() {
-    std::cout << "start" << std::endl;
-
+    std::cout << "DeepestRules:" << deepest << std::endl;
+    std::cout << "IsAllowed: " << isAllowed << std::endl;
   }
 };
 

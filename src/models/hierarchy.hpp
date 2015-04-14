@@ -10,6 +10,7 @@
 #include <string>
 
 /* Order is important ! */
+#include <boost/algorithm/string.hpp>
 #include <boost/graph/transitive_closure.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/graph_utility.hpp>
@@ -18,8 +19,9 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/bimap.hpp>
 
+
 using namespace boost;
-// using namespace std;
+using namespace std;
 
 
 struct sample_graph_writer {
@@ -59,6 +61,45 @@ public:
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Hierarchy& h);
+
+  int loadFromFile(std::string fileName) {
+    std::ifstream data(fileName);
+    if (!data) {
+      std::cerr << "No " << fileName << " file" << std::endl;
+      return -1;
+    }
+    std::string str;
+    std::string line;
+    int id;
+
+  typedef vector<string> split_vector_type;
+
+    std::vector<std::string> splitVec;
+
+    int count = 0;
+    for (std::string line; std::getline(data, line);) {
+
+      std::size_t found = line.find("#");
+      if (found == std::string::npos) {
+        splitVec.clear();
+        split(splitVec, line, is_any_of(" "));
+        if (count == 1) {
+          std::cout << "ajout de " << atoi(splitVec[0].c_str()) << " "
+            << splitVec[1] << std::endl;
+          addVertex(atoi(splitVec[0].c_str()), splitVec[1]);
+        } else {
+          for(int i=1; i<splitVec.size(); i++) {
+            std::cout << atoi(splitVec[0].c_str()) << "->"
+            << atoi(splitVec[i].c_str()) << std::endl;
+            addEdge(atoi(splitVec[0].c_str()), atoi(splitVec[i].c_str()));
+          }
+        }
+      } else {
+        count++;
+      }
+    }
+    return 0;
+  }
 
   void addVertex(int i) {
     if(i>maxId) {
@@ -270,6 +311,10 @@ public:
     std::ofstream out("build/" + fileName + ".dot");
     write_graphviz(out, closureReverse, make_label_writer(name));
   }
+
+
+
+
 
 
 int maxId = -1;

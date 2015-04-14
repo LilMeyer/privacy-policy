@@ -4,8 +4,8 @@ make_all:
 	scons
 
 policy:
-	scons build/release/src/bin/policy_test
-	./build/release/src/bin/policy_test
+	scons policy_test
+	./policy_test
 	# dot build/actorsHierarchyClosure.dot -Tpng -o build/actorsHierarchyClosure.png
 	# dot build/objectsHierarchyClosure.dot -Tpng -o build/objectsHierarchyClosure.png
 	# dot build/actorsHierarchyClosureReverse.dot -Tpng -o build/actorsHierarchyClosureReverse.png

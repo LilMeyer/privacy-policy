@@ -27,6 +27,7 @@ def print_info():
   print_line('Libs'        , ', '.join(env['libs']))
   print_line('CPPDEFINES'  , ', '.join(env['CPPDEFINES']))
   print_line('CPPPATH'     , ', '.join(env['CPPPATH']))
+  print colors.BOLD + '----------' + colors.ENDC
 
 # --- lint ----
 def doLint(env, target, source ):

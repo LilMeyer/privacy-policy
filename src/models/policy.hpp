@@ -168,6 +168,15 @@ public:
     return result;
   }
 
+  bool sumModalities(std::vector<int> rulesId) {
+    int l = rulesId.size();
+    for(int i=0; i<l; i++) {
+      if(!rulesM.find(rulesId[i])->second.permission) {
+        return false;
+      }
+    }
+    return true;
+  }
 
 
   Hierarchy actors;

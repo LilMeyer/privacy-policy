@@ -1,0 +1,10 @@
+# Example 1
+0 Root
+1 King
+2 Queen
+3 KingSon
+4 QueenSon
+# ----------
+0 1 2
+1 3
+3 4

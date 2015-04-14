@@ -15,7 +15,6 @@
 #include "./../models/rule.hpp"
 #include "./../models/hierarchy.hpp"
 #include "./../utils/vectors.hpp"
-#include "policy.cpp"
 
 /* Order is important ! */
 #include <boost/graph/transitive_closure.hpp>
@@ -49,6 +48,8 @@ public:
 
     suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test1 - Unique Solution.",
             &HierarchyTest::test1));
+    suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test1 - Unique Solution.",
+            &HierarchyTest::test2));
     return suiteOfTests;
   }
 
@@ -130,7 +131,12 @@ protected:
     CPPUNIT_ASSERT(vectorSameValues(v3, r));
 
     hierarchy.toDotFile("hierarchy_test");
+  }
 
+  void test2() {
+    Hierarchy example1;
+    example1.loadFromFile("src/examples/graph1.dat");
+    example1.toDotFile("example1");
   }
 };
 
