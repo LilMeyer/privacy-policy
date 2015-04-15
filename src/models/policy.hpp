@@ -49,22 +49,22 @@ public:
     }
   }
 
-  void addActorsEdge(int i, int j) {
+  void addActorEdge(int i, int j) {
     actors.addEdge(i, j);
   }
 
-  void addObjectsEdge(int i, int j) {
+  void addObjectEdge(int i, int j) {
     objects.addEdge(i, j);
   }
 
-  void addActorsEdges(std::vector< pair<int, int> > v) {
+  void addActorEdges(std::vector< pair<int, int> > v) {
     int l = v.size();
     for(int i=0; i<l; i++) {
       actors.addEdge(v[i].first, v[i].second);
     }
   }
 
-  void addObjectsEdges(std::vector< pair<int, int> > v) {
+  void addObjectEdges(std::vector< pair<int, int> > v) {
     int l = v.size();
     for(int i=0; i<l; i++) {
       objects.addEdge(v[i].first, v[i].second);

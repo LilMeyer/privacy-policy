@@ -81,7 +81,7 @@ protected:
     hierarchy.addEdge(kingId, kingSonId);
 
 
-    // Redirect cout.
+    // Redirect cout. (à supprimer)
     streambuf* oldCoutStreamBuf = cout.rdbuf();
     ostringstream strCout;
     cout.rdbuf(strCout.rdbuf());

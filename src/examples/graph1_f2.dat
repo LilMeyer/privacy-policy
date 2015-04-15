@@ -1,0 +1,4 @@
+Root->King
+Root->Queen
+King->KingSon
+Queen->QueenSon

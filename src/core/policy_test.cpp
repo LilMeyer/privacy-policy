@@ -91,8 +91,8 @@ protected:
       pair<int, int> (2, 6)
     };
 
-    policy.addActorsEdges(actorsEdges);
-    policy.addObjectsEdges(objectsEdges);
+    policy.addActorEdges(actorsEdges);
+    policy.addObjectEdges(objectsEdges);
 
     rules.push_back(Rule(1, 0, 1, 2, false));
     rules.push_back(Rule(2, 0, 2, 2, false));
