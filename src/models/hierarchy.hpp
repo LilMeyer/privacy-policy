@@ -64,16 +64,11 @@ public:
 
   int loadFromFile(std::string fileName) {
     std::ifstream data(fileName);
-    if (!data) {
+    if(!data) {
       std::cerr << "No " << fileName << " file" << std::endl;
       return -1;
     }
-    std::string str;
-    std::string line;
-    int id;
-
-  typedef vector<string> split_vector_type;
-
+    std::string str, line;
     std::vector<std::string> splitVec;
 
     int count = 0;
@@ -88,7 +83,7 @@ public:
             << splitVec[1] << std::endl;
           addVertex(atoi(splitVec[0].c_str()), splitVec[1]);
         } else {
-          for(int i=1; i<splitVec.size(); i++) {
+          for(unsigned int i=1; i<splitVec.size(); i++) {
             std::cout << atoi(splitVec[0].c_str()) << "->"
             << atoi(splitVec[i].c_str()) << std::endl;
             addEdge(atoi(splitVec[0].c_str()), atoi(splitVec[i].c_str()));
@@ -98,6 +93,45 @@ public:
         count++;
       }
     }
+    return 0;
+  }
+
+  int loadFromFileF2(std::string fileName) {
+    std::ifstream data(fileName);
+    if(!data) {
+      std::cerr << "No " << fileName << " file" << std::endl;
+      return -1;
+    }
+
+    std::string line;
+    int id = 0;
+    std::vector<std::string> splitVec;
+    std::unordered_map<int, std::string> verticesUmap;
+    for (std::string line; std::getline(data, line);) {
+      split(splitVec, line, is_any_of("->"));
+      int l = splitVec.size();
+      if(l!=2) {
+        continue;
+      }
+      auto result = verticesUmap.find(atoi(splitVec[0].c_str()));
+      if (result == verticesUmap.end()) {
+        cout << "Element not found: " << endl;
+        verticesUmap.insert(std::pair<int, string>(id, splitVec[0]));
+        id++;
+      }
+      result = verticesUmap.find(atoi(splitVec[1].c_str()));
+      if (result == verticesUmap.end()) {
+        cout << "Element not found: " << endl;
+        verticesUmap.insert(std::pair<int, string>(id, splitVec[1]));
+        id++;
+      }
+    }
+
+    std::unordered_map<int, std::string>::iterator it;
+    for(it = verticesUmap.begin(); it != verticesUmap.end(); it++) {
+      addVertex(it->first, it->second);
+    }
+
     return 0;
   }
 

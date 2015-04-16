@@ -48,8 +48,10 @@ public:
 
     suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test1 - Unique Solution.",
             &HierarchyTest::test1));
-    suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test1 - Unique Solution.",
+    suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test2 import.",
             &HierarchyTest::test2));
+    suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test3 import.",
+            &HierarchyTest::test3));
     return suiteOfTests;
   }
 
@@ -138,6 +140,16 @@ protected:
     example1.loadFromFile("src/examples/graph1.dat");
     example1.toDotFile("example1");
   }
+
+  void test3() {
+    std::cout << "Test 3" << std::endl;
+    Hierarchy example2;
+    example2.loadFromFileF2("src/examples/graph1_f2.dat");
+    example2.toDotFile("example1_f2");
+  }
+
+
+
 };
 
 
