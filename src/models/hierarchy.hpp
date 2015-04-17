@@ -33,6 +33,8 @@ struct sample_graph_writer {
 };
 
 
+
+
 class Hierarchy {
 typedef property <vertex_name_t, char> Name;
 typedef property <vertex_index_t, std::size_t, Name> Index;
@@ -103,34 +105,50 @@ public:
       return -1;
     }
 
-    std::string line;
     int id = 0;
     std::vector<std::string> splitVec;
-    std::unordered_map<int, std::string> verticesUmap;
+    bimap<int, std::string> verticesBimap;
     for (std::string line; std::getline(data, line);) {
-      split(splitVec, line, is_any_of("->"));
+      splitVec.clear();
+      split(splitVec, line, is_any_of("->"), token_compress_on);
       int l = splitVec.size();
+      // cout << "l:" << l << endl;
+      // for(int i=0; i<splitVec.size(); i++) {
+      //   cout << "|" << splitVec[i];
+      // }
+      // cout << endl;
+
       if(l!=2) {
         continue;
       }
-      auto result = verticesUmap.find(atoi(splitVec[0].c_str()));
-      if (result == verticesUmap.end()) {
-        cout << "Element not found: " << endl;
-        verticesUmap.insert(std::pair<int, string>(id, splitVec[0]));
+      cout << "id:" << id << endl;
+      cout << splitVec[0] << " " << splitVec[1] << endl;
+
+
+      bm_type::right_const_iterator right_iter;
+      right_iter = verticesBimap.right.find(splitVec[0]);
+
+      if (right_iter == verticesBimap.right.end()) {
+        cout << "INsert" << id << " " << splitVec[0] << endl;
+        verticesBimap.insert(bm_type::value_type(id, splitVec[0]));
         id++;
       }
-      result = verticesUmap.find(atoi(splitVec[1].c_str()));
-      if (result == verticesUmap.end()) {
-        cout << "Element not found: " << endl;
-        verticesUmap.insert(std::pair<int, string>(id, splitVec[1]));
+
+      right_iter = verticesBimap.right.find(splitVec[1]);
+      if (right_iter == verticesBimap.right.end()) {
+        cout << "INsert" << id << " " << splitVec[1] << endl;
+        verticesBimap.insert(bm_type::value_type(id, splitVec[1]));
         id++;
       }
     }
 
-    std::unordered_map<int, std::string>::iterator it;
-    for(it = verticesUmap.begin(); it != verticesUmap.end(); it++) {
-      addVertex(it->first, it->second);
-    }
+
+    // /* specify left or right */
+    // bm_type::const_iterator it;
+    // for(it = verticesBimap.begin(); it != verticesBimap.end(); it++) {
+    //   cout << it->first << "<-->" << it->second << endl;
+    //   addVertex(it->first, it->second);
+    // }
 
     return 0;
   }
