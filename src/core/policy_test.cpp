@@ -14,7 +14,7 @@
 
 #include "./../models/rule.hpp"
 #include "./../models/hierarchy.hpp"
-#include "./../models/policy.hpp"
+#include "./../models/policyForTest.hpp"
 #include "./../utils/vectors.hpp"
 
 /* Order is important ! */
@@ -39,34 +39,12 @@ class GraphTest : public CppUnit::TestFixture {
 typedef bimap< int, std::string> bm_type;
 
 private:
-  Policy policy;
+  PolicyForTest policy;
   std::vector<Rule> rules;
-  std::unordered_map<int, Rule> rulesUmap;
-  int actor;
-  int object;
 public:
   GraphTest() {
-  }
 
-  static CppUnit::Test *suite() {
-    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("GraphTest");
-
-    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test1",
-            &GraphTest::test1));
-    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test2",
-            &GraphTest::test2));
-    return suiteOfTests;
-  }
-
-  void setUp() {}
-
-  void tearDown() {}
-
-protected:
-
-  void test1() {
-    cout << "Test 1" << endl;
-    Policy policy;
+    cout << "Initialization" << endl;
     std::vector<Rule> rules;
     std::vector<std::string> actorsVector = {
       "CHUS", "Cardiologie", "Urgence", "Doctor B"
@@ -103,28 +81,76 @@ protected:
     rules.push_back(Rule(4, 0, 3, 5, false));
 
     policy.addRules(rules);
+  }
+
+  static CppUnit::Test *suite() {
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("GraphTest");
+
+    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test1",
+            &GraphTest::test1));
+    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test2",
+            &GraphTest::test2));
+    return suiteOfTests;
+  }
+
+  void setUp() {}
+
+  void tearDown() {}
+
+protected:
+
+  void test1() {
+
+    std::vector<int> effectiveExpected = { 1, 2, 3, 4 };
+    std::vector<int> highestExpected = { 1, 2, 3, 4 };
+    std::vector<int> deepestExpected = { 3, 4 };
 
     std::vector<int> effective = policy.effectiveRules(3, 5);
     std::vector<int> highest = policy.highestRules(effective);
     std::vector<int> deepest = policy.deepestRules(highest, 3);
     bool isAllowed = policy.sumModalities(deepest);
+
+
     std::cout << "EffectiveRules:" << effective << std::endl;
-    std::cout << "Highest:" << highest << std::endl;
-    std::cout << "DeepestRules:" << deepest << std::endl;
-    std::cout << "IsAllowed: " << isAllowed << std::endl;
+    std::cout << "Highest:"        << highest   << std::endl;
+    std::cout << "DeepestRules:"   << deepest   << std::endl;
+    std::cout << "IsAllowed:"      << isAllowed << std::endl;
+
+    CPPUNIT_ASSERT(vectorSameValues(effective, effectiveExpected));
+    CPPUNIT_ASSERT(vectorSameValues(highest, highestExpected));
+    CPPUNIT_ASSERT(vectorSameValues(deepest, deepestExpected));
+    CPPUNIT_ASSERT(isAllowed == false);
+
   }
 
   void test2() {
-    cout << "Test 2" << endl;
-    std::string str;
-    Policy policy;
-    std::string folder = "src/tests/case1/";
-    policy.loadActorsFromFile(folder + "actors.dat");
-    policy.loadObjectsFromFile(folder + "objects.dat");
-    policy.loadRulesFromFile(folder + "rules.dat");
-    policy.printRules();
-    policy.isAllowed("Hugo P", "Examen dentaire", str);
+    rules.clear();
+    rules.push_back(Rule(1, 0, 1, 2, false));
+    rules.push_back(Rule(2, 0, 2, 2, false));
+    rules.push_back(Rule(4, 0, 3, 5, false));
+
+    policy.changeRules(rules);
+
+    std::vector<int> effectiveExpected = { 1, 2, 4 };
+    std::vector<int> highestExpected = { 1, 2, 4 };
+    std::vector<int> deepestExpected = { 4 };
+
+    std::vector<int> effective = policy.effectiveRules(3, 5);
+    std::vector<int> highest = policy.highestRules(effective);
+    std::vector<int> deepest = policy.deepestRules(highest, 3);
+    bool isAllowed = policy.sumModalities(deepest);
+
+    std::cout << "EffectiveRules:" << effective << std::endl;
+    std::cout << "Highest:"        << highest   << std::endl;
+    std::cout << "DeepestRules:"   << deepest   << std::endl;
+    std::cout << "IsAllowed:"      << isAllowed << std::endl;
+
+    CPPUNIT_ASSERT(vectorSameValues(effective, effectiveExpected));
+    CPPUNIT_ASSERT(vectorSameValues(highest, highestExpected));
+    CPPUNIT_ASSERT(vectorSameValues(deepest, deepestExpected));
+    CPPUNIT_ASSERT(isAllowed == false);
   }
+
 };
 
 

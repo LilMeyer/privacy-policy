@@ -27,7 +27,7 @@ using namespace boost;
 using namespace std;
 
 class Policy {
-
+public:
 typedef bimap <int, std::string> bm_type;
 typedef std::unordered_map <int, Rule> um_type;
 typedef property <vertex_name_t, char> Name;
@@ -35,7 +35,8 @@ typedef property <vertex_index_t, std::size_t, Name> Index;
 typedef adjacency_list <listS, listS, directedS, Index> Graph;
 typedef graph_traits <Graph>::vertex_descriptor vertex_t;
 
-public:
+
+
   Policy() {}
 
   void addActorVertices(std::vector<std::string> actorsVector) {
@@ -81,6 +82,11 @@ public:
     for(int i=0; i<l; i++) {
       addRule(v[i]);
     }
+  }
+
+  void changeRules(std::vector<Rule> v) {
+    rulesM.clear();
+    addRules(v);
   }
 
   std::vector<int> effectiveRules(int actor, int object) {
@@ -205,120 +211,6 @@ public:
       }
     }
     return true;
-  }
-
-  int loadFromFolder(std::string folder) {
-    actors.loadFromFileF2(folder + "actors.dat");
-    objects.loadFromFileF2(folder + "objects.dat");
-    loadRulesFromFile(folder + "rules.dat");
-    return 0;
-  }
-
-  int loadActorsFromFile(std::string fileName) {
-    return actors.loadFromFileF2(fileName);
-  }
-
-  int loadObjectsFromFile(std::string fileName) {
-    return objects.loadFromFileF2(fileName);
-  }
-
-  int loadRulesFromFile(std::string fileName) {
-    std::ifstream data(fileName);
-    if(!data) {
-      std::cerr << "No " << fileName << " file" << std::endl;
-      return -1;
-    }
-
-    std::vector<std::string> splitVec;
-    bimap<int, std::string> verticesBimap;
-    std::vector<pair<int, int> > edges;
-
-    int l, priority, ruleId, actorId, objectId;
-    bool permission;
-    for (std::string line; std::getline(data, line);) {
-
-      std::size_t found = line.find("next");
-      if (found != std::string::npos) {
-        break;
-      }
-
-      found = line.find("#");
-      if (found != std::string::npos) {
-        continue;
-      }
-
-      splitVec.clear();
-      split(splitVec, line, is_any_of(";"), token_compress_on);
-      l = splitVec.size();
-      if(l!=6) {
-        continue;
-      }
-
-      bm_type::right_const_iterator rIt;
-
-      ruleId = atoi(splitVec[0].c_str());
-      priority = atoi(splitVec[1].c_str());
-      rIt = actors.namesBimap.right.find(splitVec[2]);
-      if(rIt == actors.namesBimap.right.end()) {
-        cout << "Actor " << splitVec[2] << " not found " << endl;
-        continue;
-      } else {
-        actorId = actors.namesBimap.right.find(splitVec[2])->second;
-      }
-
-      rIt = objects.namesBimap.right.find(splitVec[3]);
-      if(rIt == objects.namesBimap.right.end()) {
-        cout << "Object" << splitVec[3] << " not found " << endl;
-        continue;
-      } else {
-        objectId = objects.namesBimap.right.find(splitVec[3])->second;
-      }
-
-      permission = splitVec[4] == "permission";
-
-      Rule r(ruleId, priority, actorId, objectId, permission);
-      rulesM.insert(std::pair<int, Rule>(ruleId, r));
-    }
-
-    return 0;
-  }
-
-    int loadRequestsFromFile(std::string fileName) {
-      std::ifstream data(fileName);
-      if(!data) {
-        std::cerr << "No " << fileName << " file" << std::endl;
-        return -1;
-      }
-
-      bool permission;
-      for (std::string line; std::getline(data, line);) {
-
-        std::size_t found = line.find("next");
-        if (found != std::string::npos) {
-          break;
-        }
-
-        found = line.find("#");
-        if (found != std::string::npos) {
-          continue;
-        }
-
-
-
-      }
-
-
-
-      return 0;
-    }
-
-
-
-  void printRules() {
-    std::unordered_map<int, Rule>::iterator it;
-    for(it = rulesM.begin(); it != rulesM.end(); it++) {
-      cout << it->second << endl;
-    }
   }
 
   bool isAllowed(int actorId, int objectId, std::string &str) {

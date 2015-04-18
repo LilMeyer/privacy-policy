@@ -30,7 +30,11 @@ hierarchy_test:
 	scons hierarchy_test
 	./hierarchy_test
 
-all_tests: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test
+policy_case1_test:
+	scons policy_case1_test
+	./policy_case1_test
+
+all_tests: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test policy_case1_test
 
 run_all: make_all
 	./graph3_test
@@ -41,5 +45,6 @@ run_all: make_all
 	./graph4_test
 	./vectors_test
 	./hierarchy_test
+	./policy_case1_test
 	
-.PHONY: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test
+.PHONY: graph3_test graph1_test policy_test graph2_test bimap_test graph4_test vectors_test hierarchy_test policy_case1_test
