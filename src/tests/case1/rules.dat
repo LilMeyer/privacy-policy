@@ -1,0 +1,29 @@
+#Rule id;Priority;Subject;Ressource;prohibition/permission
+0;2;Doctors;Sante dentaire;prohibition;
+1;2;Hugo P;Sante dentaire;permission;
+2;2;CHUS;Sante dentaire;prohibition;
+3;2;Magog;Sante dentaire;prohibition;
+4;2;Doctors;Sante dentaire;prohibition;
+5;2;Granit;Sante dentaire;prohibition;
+next
+0;2;Doctors;Sante dentaire;prohibition;
+1;2;Hugo P;Sante dentaire;permission;
+next
+0;2;Doctors;Sante dentaire;prohibition;
+1;2;Hugo P;Sante dentaire;permission;
+2;2;CHUS;Sante dentaire;prohibition;
+3;2;Magog;Sante dentaire;prohibition;
+4;2;Doctors;Sante dentaire;prohibition;
+next
+0;2;Doctors;Sante dentaire;prohibition;
+4;2;Non doctors;Sante dentaire;permission;
+5;2;Granit;Sante dentaire;permission;
+6;2;CHUS;Sante dentaire;permission;
+next
+0;2;Doctors;Sante dentaire;prohibition;
+1;2;Hugo P;Sante dentaire;permission;
+2;2;CHUS;Sante dentaire;prohibition;
+3;2;Magog;Sante dentaire;prohibition;
+4;2;Doctors;Sante dentaire;prohibition;
+5;2;Granit;Sante dentaire;prohibition;
+end

@@ -33,8 +33,6 @@ struct sample_graph_writer {
 };
 
 
-
-
 class Hierarchy {
 typedef property <vertex_name_t, char> Name;
 typedef property <vertex_index_t, std::size_t, Name> Index;
@@ -74,7 +72,7 @@ public:
     std::vector<std::string> splitVec;
 
     int count = 0;
-    for (std::string line; std::getline(data, line);) {
+    for(std::string line; std::getline(data, line);) {
 
       std::size_t found = line.find("#");
       if (found == std::string::npos) {
@@ -108,6 +106,8 @@ public:
     int id = 0;
     std::vector<std::string> splitVec;
     bimap<int, std::string> verticesBimap;
+    std::vector<pair<int, int> > edges;
+
     for (std::string line; std::getline(data, line);) {
       splitVec.clear();
       split(splitVec, line, is_any_of("->"), token_compress_on);
@@ -121,34 +121,39 @@ public:
       if(l!=2) {
         continue;
       }
-      cout << "id:" << id << endl;
-      cout << splitVec[0] << " " << splitVec[1] << endl;
-
+      // cout << "id:" << id << endl;
+      // cout << splitVec[0] << " " << splitVec[1] << endl;
 
       bm_type::right_const_iterator right_iter;
       right_iter = verticesBimap.right.find(splitVec[0]);
 
       if (right_iter == verticesBimap.right.end()) {
-        cout << "INsert" << id << " " << splitVec[0] << endl;
+        // cout << "INsert" << id << " " << splitVec[0] << endl;
         verticesBimap.insert(bm_type::value_type(id, splitVec[0]));
         id++;
       }
 
       right_iter = verticesBimap.right.find(splitVec[1]);
       if (right_iter == verticesBimap.right.end()) {
-        cout << "INsert" << id << " " << splitVec[1] << endl;
+        // cout << "INsert" << id << " " << splitVec[1] << endl;
         verticesBimap.insert(bm_type::value_type(id, splitVec[1]));
         id++;
       }
+      edges.push_back(pair<int, int> (id-2, id-1));
     }
 
 
-    // /* specify left or right */
-    // bm_type::const_iterator it;
-    // for(it = verticesBimap.begin(); it != verticesBimap.end(); it++) {
-    //   cout << it->first << "<-->" << it->second << endl;
-    //   addVertex(it->first, it->second);
-    // }
+    bm_type::left_const_iterator it;
+    for(it = verticesBimap.left.begin(); it != verticesBimap.left.end(); it++) {
+      // cout << it->first << "<-->" << it->second << endl;
+      addVertex(it->first, it->second);
+    }
+
+    for(unsigned int i=0; i<edges.size(); i++) {
+      // cout << edges[i].first << " " << edges[i].second;
+      addEdge(edges[i].first, edges[i].second);
+    }
+
 
     return 0;
   }

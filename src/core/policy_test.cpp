@@ -51,8 +51,10 @@ public:
   static CppUnit::Test *suite() {
     CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("GraphTest");
 
-    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test1 - Unique Solution.",
+    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test1",
             &GraphTest::test1));
+    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test2",
+            &GraphTest::test2));
     return suiteOfTests;
   }
 
@@ -63,6 +65,7 @@ public:
 protected:
 
   void test1() {
+    cout << "Test 1" << endl;
     Policy policy;
     std::vector<Rule> rules;
     std::vector<std::string> actorsVector = {
@@ -102,11 +105,25 @@ protected:
     policy.addRules(rules);
 
     std::vector<int> effective = policy.effectiveRules(3, 5);
-    std::vector<int> deepest = policy.deepestRules(effective, 3);
+    std::vector<int> highest = policy.highestRules(effective);
+    std::vector<int> deepest = policy.deepestRules(highest, 3);
     bool isAllowed = policy.sumModalities(deepest);
     std::cout << "EffectiveRules:" << effective << std::endl;
+    std::cout << "Highest:" << highest << std::endl;
     std::cout << "DeepestRules:" << deepest << std::endl;
     std::cout << "IsAllowed: " << isAllowed << std::endl;
+  }
+
+  void test2() {
+    cout << "Test 2" << endl;
+    std::string str;
+    Policy policy;
+    std::string folder = "src/tests/case1/";
+    policy.loadActorsFromFile(folder + "actors.dat");
+    policy.loadObjectsFromFile(folder + "objects.dat");
+    policy.loadRulesFromFile(folder + "rules.dat");
+    policy.printRules();
+    policy.isAllowed("Hugo P", "Examen dentaire", str);
   }
 };
 

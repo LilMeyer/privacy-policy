@@ -1,0 +1,30 @@
+#Rule id;Priority;Subject;Ressource;prohibition/permission;condition (optional)
+1;2;Doctors;Sante dentaire(Patient=Simon);prohibition;
+2;2;Non doctors;Sante dentaire(Patient=Simon);permission;
+3;1;Arthur H;Sante dentaire(Patient=Simon);permission;
+4;4;Doc;Sante dentaire(Patient=Simon);prohibition;
+5;3;CHUS;Sante dentaire(Patient=Simon);prohibition;
+6;4;CHUS;Sante dentaire(Patient=Simon);prohibition;
+next
+0;1;Doctors;Sante dentaire(Patient=Simon);prohibition;
+1;2;Hugo P;Sante dentaire(Patient=Simon);permission;
+2;2;CHUS;Sante dentaire(Patient=Simon);prohibition;
+3;3;Arthur H;Sante dentaire(Patient=Simon);permission;
+4;4;Doc;Sante dentaire(Patient=Simon);prohibition;
+5;3;CHUS;Sante dentaire(Patient=Simon);prohibition;
+6;4;CHUS;Sante dentaire(Patient=Simon);prohibition;
+next
+1;2;Hugo P;Sante dentaire(Patient=Simon);permission;
+2;2;CHUS;Sante dentaire(Patient=Simon);prohibition;
+3;3;Arthur H;Sante dentaire(Patient=Simon);permission;
+4;4;Doc;Sante dentaire(Patient=Simon);prohibition;
+5;3;CHUS;Sante dentaire(Patient=Simon);prohibition;
+6;4;CHUS;Sante dentaire(Patient=Simon);prohibition;
+next
+1;2;Doctors;Sante dentaire(Patient=Simon);prohibition;
+2;2;Non doctors;Sante dentaire(Patient=Simon);permission;
+3;1;Arthur H;Sante dentaire(Patient=Simon);permission;
+4;4;Doc;Sante dentaire(Patient=Simon);prohibition;
+5;3;CHUS;Sante dentaire(Patient=Simon);prohibition;
+6;4;CHUS;Sante dentaire(Patient=Simon);prohibition;
+end

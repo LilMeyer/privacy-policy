@@ -1,0 +1,14 @@
+All hospitals->CHUS
+All hospitals->Magog
+All hospitals->Granit
+Granit->Hugo P
+CHUS->Doctors
+CHUS->Non doctors
+Magog->Non doctors
+Magog->Doc
+Doc->Elise C
+Doctors->Arthur H
+Doctors->Hugo P
+Non doctors->Elise C
+Non doctors->Arthur H
+Non doctors->Hugo P

@@ -8,9 +8,10 @@
 #include <utility>                   // for std::pair
 #include <vector>
 
+#include "./../utils/vectors.hpp"
 #include "rule.hpp"
 #include "hierarchy.hpp"
-#include "./../utils/vectors.hpp"
+#include "request.hpp"
 
 /* Order is important ! */
 #include <boost/graph/transitive_closure.hpp>
@@ -87,7 +88,7 @@ public:
     bm_type::left_const_iterator oIt = objects.namesBimap.left.find(object);
     std::cout << "Demande de " << aIt->second << " sur " << oIt->second << std::endl;
     std::vector<int> result, adjacent = actors.inAdjacentIndexVertices(actor);
-    cout << "adjacent " << adjacent << endl;
+    // cout << "adjacent " << adjacent << endl;
     int m = adjacent.size();
 
     for(um_type::iterator it = rulesM.begin(); it != rulesM.end(); it++) {
@@ -104,7 +105,35 @@ public:
     return result;
   }
 
+  std::vector<int> highestRules(std::vector<int> rules) {
+    int l = rules.size();
+    if(l<=1) {
+      return rules;
+    }
 
+    int priority = 100000;
+    std::unordered_map<int, Rule>::const_iterator rIt;
+
+    for(int i=0; i<l; i++) {
+      rIt = rulesM.find(rules[i]);
+      if(rIt != rulesM.end()) {
+        if(rIt->second.priority < priority) {
+          priority = rIt->second.priority;
+        }
+      }
+    }
+
+    std::vector<int> ruleIds;
+    for(int i=0; i<l; i++) {
+      rIt = rulesM.find(rules[i]);
+      if(rIt != rulesM.end()) {
+        if(rIt->second.priority == priority) {
+          ruleIds.push_back(rIt->first);
+        }
+      }
+    }
+    return ruleIds;
+  }
 
   std::vector<int> deepestRules(std::vector <int> rules, int actor) {
     bm_type::left_const_iterator aIt = actors.namesBimap.left.find(actor);
@@ -135,7 +164,7 @@ public:
 
     // Liste des acteurs ancêtres à actors :
     std::vector<int> adjacents = actors.inAdjacentIndexVertices(actor);
-    std::cout << "adjacentIndexVertices" << adjacents << std::endl;
+    // std::cout << "adjacentIndexVertices" << adjacents << std::endl;
 
     std::vector<int> inRange;
     std::unordered_map<int, std::vector<int> > inRangeAdjacentsUmap;
@@ -178,9 +207,186 @@ public:
     return true;
   }
 
+  int loadFromFolder(std::string folder) {
+    actors.loadFromFileF2(folder + "actors.dat");
+    objects.loadFromFileF2(folder + "objects.dat");
+    loadRulesFromFile(folder + "rules.dat");
+    return 0;
+  }
+
+  int loadActorsFromFile(std::string fileName) {
+    return actors.loadFromFileF2(fileName);
+  }
+
+  int loadObjectsFromFile(std::string fileName) {
+    return objects.loadFromFileF2(fileName);
+  }
+
+  int loadRulesFromFile(std::string fileName) {
+    std::ifstream data(fileName);
+    if(!data) {
+      std::cerr << "No " << fileName << " file" << std::endl;
+      return -1;
+    }
+
+    std::vector<std::string> splitVec;
+    bimap<int, std::string> verticesBimap;
+    std::vector<pair<int, int> > edges;
+
+    int l, priority, ruleId, actorId, objectId;
+    bool permission;
+    for (std::string line; std::getline(data, line);) {
+
+      std::size_t found = line.find("next");
+      if (found != std::string::npos) {
+        break;
+      }
+
+      found = line.find("#");
+      if (found != std::string::npos) {
+        continue;
+      }
+
+      splitVec.clear();
+      split(splitVec, line, is_any_of(";"), token_compress_on);
+      l = splitVec.size();
+      if(l!=6) {
+        continue;
+      }
+
+      bm_type::right_const_iterator rIt;
+
+      ruleId = atoi(splitVec[0].c_str());
+      priority = atoi(splitVec[1].c_str());
+      rIt = actors.namesBimap.right.find(splitVec[2]);
+      if(rIt == actors.namesBimap.right.end()) {
+        cout << "Actor " << splitVec[2] << " not found " << endl;
+        continue;
+      } else {
+        actorId = actors.namesBimap.right.find(splitVec[2])->second;
+      }
+
+      rIt = objects.namesBimap.right.find(splitVec[3]);
+      if(rIt == objects.namesBimap.right.end()) {
+        cout << "Object" << splitVec[3] << " not found " << endl;
+        continue;
+      } else {
+        objectId = objects.namesBimap.right.find(splitVec[3])->second;
+      }
+
+      permission = splitVec[4] == "permission";
+
+      Rule r(ruleId, priority, actorId, objectId, permission);
+      rulesM.insert(std::pair<int, Rule>(ruleId, r));
+    }
+
+    return 0;
+  }
+
+    int loadRequestsFromFile(std::string fileName) {
+      std::ifstream data(fileName);
+      if(!data) {
+        std::cerr << "No " << fileName << " file" << std::endl;
+        return -1;
+      }
+
+      bool permission;
+      for (std::string line; std::getline(data, line);) {
+
+        std::size_t found = line.find("next");
+        if (found != std::string::npos) {
+          break;
+        }
+
+        found = line.find("#");
+        if (found != std::string::npos) {
+          continue;
+        }
+
+
+
+      }
+
+
+
+      return 0;
+    }
+
+
+
+  void printRules() {
+    std::unordered_map<int, Rule>::iterator it;
+    for(it = rulesM.begin(); it != rulesM.end(); it++) {
+      cout << it->second << endl;
+    }
+  }
+
+  bool isAllowed(int actorId, int objectId, std::string &str) {
+    std::vector<int> ruleIds = effectiveRules(actorId, objectId);
+    cout << "EffectiveRules:" << ruleIds << endl;
+    ruleIds = deepestRules(ruleIds, actorId);
+    cout << "Deepest:" << ruleIds << endl;
+    // return sumModalities(ruleIds);
+    return true;
+  }
+
+  bool isAllowed(std::string actor, std::string object, std::string &str) {
+    int actorId = actorStringToId(actor);
+    int objectId = objectStringToId(object);
+    return isAllowed(actorId, objectId, str);
+  }
+
+  int actorStringToId(std::string &str) {
+    bm_type::right_const_iterator rIt;
+    rIt = actors.namesBimap.right.find(str);
+    if(rIt == actors.namesBimap.right.end()) {
+      cout << "Actor " << str << " not found " << endl;
+      throw "Error";
+      return -1;
+    } else {
+      return actors.namesBimap.right.find(str)->second;
+    }
+  }
+
+  int objectStringToId(std::string &str) {
+    bm_type::right_const_iterator rIt;
+    rIt = objects.namesBimap.right.find(str);
+    if(rIt == objects.namesBimap.right.end()) {
+      cout << "Object " << str << " not found " << endl;
+      throw "Error";
+      return -1;
+    } else {
+      return objects.namesBimap.right.find(str)->second;
+    }
+  }
+
+  std::string actorIdToString(int id) {
+    bm_type::left_const_iterator lIt;
+    lIt = actors.namesBimap.left.find(id);
+    if(lIt == actors.namesBimap.left.end()) {
+      cout << "Actor " << id << " not found " << endl;
+      throw "Error";
+      return "";
+    } else {
+      return actors.namesBimap.left.find(id)->second;
+    }
+  }
+
+  std::string objectIdToString(int id) {
+    bm_type::left_const_iterator lIt;
+    lIt = objects.namesBimap.left.find(id);
+    if(lIt == objects.namesBimap.left.end()) {
+      cout << "Actor " << id << " not found " << endl;
+      throw "Error";
+      return "";
+    } else {
+      return objects.namesBimap.left.find(id)->second;
+    }
+  }
 
   Hierarchy actors;
   Hierarchy objects;
+  Request request;
   std::unordered_map<int, Rule> rulesM;
 
 private:
