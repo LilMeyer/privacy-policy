@@ -6,7 +6,8 @@
 
 class Request {
 public:
-  Request() {
+  Request() {}
+  Request(int actorId, int objectId): actorId(actorId), objectId(objectId) {
   }
 
   void setIds(int actorId, int objectId) {
@@ -34,10 +35,10 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const Request& request) {
-  os << " Demande de : " << request.actor << " sur " << request.object << endl;
-  os << " Highests " << request.highestRules << endl;
-  os << " effectiveRules: " << request.effectiveRules << endl;
-  os << " deepestRules: " << request.deepestRules << endl;
+  os << "Demande de : " << request.actor << " sur " << request.object << endl;
+  os << "Highests " << request.highestRules << endl;
+  os << "effectiveRules: " << request.effectiveRules << endl;
+  os << "deepestRules: " << request.deepestRules << endl;
   return os;
 }
 

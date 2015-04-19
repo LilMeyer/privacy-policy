@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "policy.hpp"
+#include "request.hpp"
 
 /* Order is important ! */
 #include <boost/graph/transitive_closure.hpp>
@@ -26,17 +27,30 @@ using namespace std;
 class PolicyForTest: public Policy {
 
 public:
-  PolicyForTest() {}
+  std::string folder;
+  std::ifstream rulesData;
+  std::ifstream actorsData;
+  std::ifstream objectsData;
+  std::ifstream requestsData;
+  Request request;
 
-  void Test() {
-    cout << "PolicyForTest" << endl;
+  PolicyForTest(std::string folder) {
+    loadFromFolder(folder);
   }
 
+  void Test() {
+  }
+
+  void run() {
+    cout << "---Policy test---" << endl;
+    cout << request << endl;
+  }
 
   int loadFromFolder(std::string folder) {
     actors.loadFromFileF2(folder + "actors.dat");
     objects.loadFromFileF2(folder + "objects.dat");
     loadRulesFromFile(folder + "rules.dat");
+    loadRequestsFromFile(folder + "requests.dat");
     return 0;
   }
 
@@ -109,29 +123,39 @@ public:
     return 0;
   }
 
-    int loadRequestsFromFile(std::string fileName) {
-      std::ifstream data(fileName);
-      if(!data) {
-        std::cerr << "No " << fileName << " file" << std::endl;
-        return -1;
-      }
 
-      for (std::string line; std::getline(data, line);) {
-
-        std::size_t found = line.find("next");
-        if (found != std::string::npos) {
-          break;
-        }
-
-        found = line.find("#");
-        if (found != std::string::npos) {
-          continue;
-        }
-
-      }
-
-      return 0;
+  int loadRequestsFromFile(std::string fileName) {
+    std::ifstream data(fileName);
+    if(!data) {
+      std::cerr << "No " << fileName << " file" << std::endl;
+      return -1;
     }
+
+    std::vector<std::string> splitVec;
+    int l;
+
+    for (std::string line; std::getline(data, line);) {
+      std::size_t found = line.find("next");
+      if (found != std::string::npos) {
+        break;
+      }
+      found = line.find("#");
+      if (found != std::string::npos) {
+        continue;
+      }
+
+      splitVec.clear();
+      split(splitVec, line, is_any_of(";"), token_compress_on);
+      l = splitVec.size();
+      if(l!=2) {
+        continue;
+      }
+      request = Request(actorStringToId(splitVec[0]),
+                        objectStringToId(splitVec[1]));
+      break;
+    }
+    return 0;
+  }
 
   void printRules() {
     std::unordered_map<int, Rule>::iterator it;

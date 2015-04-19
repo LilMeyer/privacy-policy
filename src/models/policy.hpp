@@ -278,7 +278,6 @@ typedef graph_traits <Graph>::vertex_descriptor vertex_t;
 
   Hierarchy actors;
   Hierarchy objects;
-  Request request;
   std::unordered_map<int, Rule> rulesM;
 
 private:

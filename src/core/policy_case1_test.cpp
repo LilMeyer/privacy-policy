@@ -36,10 +36,10 @@ class GraphTest : public CppUnit::TestFixture {
 typedef bimap< int, std::string> bm_type;
 
 private:
-  PolicyForTest policy;
+  PolicyForTest policyTest;
   std::vector<Rule> rules;
 public:
-  GraphTest() {
+  GraphTest() : policyTest("src/tests/case1/") {
 
   }
 
@@ -62,9 +62,7 @@ public:
 protected:
 
   void test1() {
-    std::string folder = "src/tests/case1/";
-    policy.loadFromFolder(folder);
-
+    policyTest.run();
   }
 
 };
