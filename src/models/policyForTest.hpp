@@ -38,6 +38,8 @@ public:
     loadFromFolder(folder);
   }
 
+  PolicyForTest() {}
+
   void Test() {
   }
 
@@ -150,8 +152,11 @@ public:
       if(l!=2) {
         continue;
       }
+      cout << "here " << splitVec[0] << endl;
       request = Request(actorStringToId(splitVec[0]),
-                        objectStringToId(splitVec[1]));
+                        objectStringToId(splitVec[1])/*,
+                        this*/);
+      cout << request << endl;
       break;
     }
     return 0;

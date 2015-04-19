@@ -13,7 +13,7 @@
 #include <string>
 
 #include "./../models/rule.hpp"
-#include "./../models/hierarchy.hpp"
+#include "./../models/hierarchy.cpp"
 #include "./../utils/vectors.hpp"
 
 /* Order is important ! */

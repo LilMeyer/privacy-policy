@@ -10,7 +10,7 @@
 
 #include "./../utils/vectors.hpp"
 #include "rule.hpp"
-#include "hierarchy.hpp"
+#include "hierarchy.cpp"
 #include "request.hpp"
 
 /* Order is important ! */
