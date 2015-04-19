@@ -8,9 +8,12 @@
 class Request {
 public:
   Request() {}
-  Request(int actorId, int objectId/*, const Policy &p*/): actorId(actorId), objectId(objectId) {
-    // actor = p.actorIdToString(actorId);
-    // object = p.objectIdToString(objectId);
+  Request(int actorId, int objectId): actorId(actorId), objectId(objectId) {
+  }
+
+  Request(int actorId, int objectId, const Policy &p): actorId(actorId), objectId(objectId) {
+    actor = p.actorIdToString(actorId);
+    object = p.objectIdToString(objectId);
   }
 
   void setIds(int actorId, int objectId) {

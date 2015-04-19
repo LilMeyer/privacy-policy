@@ -237,7 +237,7 @@ int Policy::objectStringToId(std::string &str) {
   }
 }
 
-std::string Policy::actorIdToString(int id) {
+std::string Policy::actorIdToString(int id) const {
   bm_type::left_const_iterator lIt;
   lIt = actors.namesBimap.left.find(id);
   if(lIt == actors.namesBimap.left.end()) {
@@ -249,7 +249,7 @@ std::string Policy::actorIdToString(int id) {
   }
 }
 
-std::string Policy::objectIdToString(int id) {
+std::string Policy::objectIdToString(int id) const {
   bm_type::left_const_iterator lIt;
   lIt = objects.namesBimap.left.find(id);
   if(lIt == objects.namesBimap.left.end()) {

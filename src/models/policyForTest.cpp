@@ -138,8 +138,8 @@ int PolicyForTest::loadRequestsFromFile(std::string fileName) {
     }
     cout << "here " << splitVec[0] << endl;
     request = Request(actorStringToId(splitVec[0]),
-                      objectStringToId(splitVec[1])/*,
-                      this*/);
+                      objectStringToId(splitVec[1]),
+                      *this);
     cout << request << endl;
     break;
   }

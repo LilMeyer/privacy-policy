@@ -11,7 +11,6 @@
 #include "./../utils/vectors.hpp"
 #include "rule.hpp"
 #include "hierarchy.hpp"
-#include "request.hpp"
 
 /* Order is important ! */
 #include <boost/graph/transitive_closure.hpp>
@@ -70,9 +69,9 @@ typedef graph_traits <Graph>::vertex_descriptor vertex_t;
 
   int objectStringToId(std::string &str);
 
-  std::string actorIdToString(int id);
+  std::string actorIdToString(int id) const;
 
-  std::string objectIdToString(int id);
+  std::string objectIdToString(int id) const;
 
   Hierarchy actors;
   Hierarchy objects;
