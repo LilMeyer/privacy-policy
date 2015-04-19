@@ -18,6 +18,8 @@ travis:
 
 clean:
 	rm -rf build
+	rm -f *_test
+	rm -f src/core/*.o
 
 generate_tests:
 	python generate_tests.py

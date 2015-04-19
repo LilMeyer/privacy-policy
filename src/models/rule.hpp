@@ -22,14 +22,5 @@ public:
 
 };
 
-std::ostream& operator<<(std::ostream& os, const Rule& rule) {
-  os << "Id: " << rule.id;
-  os << " Priority: " << rule.priority;
-  os << " Actor: " << rule.actor;
-  os << " Object: " << rule.object;
-  os << " Permission: " << (rule.permission ? "allowed" : "prohibited");
-  return os;
-}
-
 #endif
 

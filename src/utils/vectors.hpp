@@ -2,6 +2,7 @@
 #define VECTORS_H
 
 #include <iostream>
+#include <algorithm> // std::set_difference, std::sort
 #include <vector>
 #include <set>
 

@@ -2,9 +2,9 @@
 #define HIERARCHY_H
 
 #include <iostream>
-
 #include <vector>
 #include <utility> // for std::pair
+#include <unordered_map>
 
 /* Order is important ! */
 #include <boost/algorithm/string.hpp>
@@ -29,6 +29,7 @@ typedef bimap< int, std::string> bm_type;
 
 public:
   Hierarchy();
+
   friend std::ostream& operator<<(std::ostream& os, const Hierarchy& h);
 
   int loadFromFile(std::string fileName);

@@ -14,6 +14,7 @@
 
 #include "./../models/rule.hpp"
 #include "./../models/hierarchy.hpp"
+#include "./../models/policy.hpp"
 #include "./../models/policyForTest.hpp"
 #include "./../utils/vectors.hpp"
 
@@ -35,14 +36,14 @@
 using namespace boost;
 using namespace std;
 
-class GraphTest : public CppUnit::TestFixture {
+class PolicyTest : public CppUnit::TestFixture {
 typedef bimap< int, std::string> bm_type;
 
 private:
   PolicyForTest policy;
   std::vector<Rule> rules;
 public:
-  GraphTest() {
+  PolicyTest() {
 
     cout << "Initialization" << endl;
     std::vector<Rule> rules;
@@ -84,12 +85,12 @@ public:
   }
 
   static CppUnit::Test *suite() {
-    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("GraphTest");
+    CppUnit::TestSuite *suiteOfTests = new CppUnit::TestSuite("PolicyTest");
 
-    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test1",
-            &GraphTest::test1));
-    suiteOfTests->addTest(new CppUnit::TestCaller<GraphTest>("Test2",
-            &GraphTest::test2));
+    suiteOfTests->addTest(new CppUnit::TestCaller<PolicyTest>("Test1",
+            &PolicyTest::test1));
+    suiteOfTests->addTest(new CppUnit::TestCaller<PolicyTest>("Test2",
+            &PolicyTest::test2));
     return suiteOfTests;
   }
 
@@ -158,7 +159,7 @@ int main(int argc, char* argv[]) {
 
   CppUnit::TextUi::TestRunner runner;
   std::cout << "Creating Test Suites:" << std::endl;
-  runner.addTest(GraphTest::suite());
+  runner.addTest(PolicyTest::suite());
   std::cout<< "Running the unit tests."<< std::endl;
   runner.run();
 

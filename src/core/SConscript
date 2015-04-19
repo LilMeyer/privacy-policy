@@ -3,6 +3,51 @@ import glob
 
 Import('env')
 
-files = glob.glob('*_test.cpp')
-for file in files:
-  t = env.Program(target= '../../' + file[:-4], source=[file], LIBS=env['libs'])
+# files = glob.glob('*_test.cpp')
+# for file in files:
+#   t = env.Program(target= '../../' + file[:-4], source=[file], LIBS=env['libs'])
+
+env.Program(target = '../../bimap_test',
+            source=['bimap_test.cpp'],
+            LIBS=env['libs'])
+
+env.Program(target = '../../graph1_test',
+            source=['graph1_test.cpp'],
+            LIBS=env['libs'])
+
+env.Program(target = '../../graph2_test',
+            source=['graph2_test.cpp'],
+            LIBS=env['libs'])
+
+env.Program(target = '../../graph3_test',
+            source=['graph3_test.cpp'],
+            LIBS=env['libs'])
+
+env.Program(target = '../../graph4_test',
+            source=['graph4_test.cpp'],
+            LIBS=env['libs'])
+
+env.Program(target = '../../vectors_test',
+            source=['vectors_test.cpp'],
+            LIBS=env['libs'])
+
+env.Program(target = '../../hierarchy_test',
+            source=['hierarchy_test.cpp'],
+            LIBS=env['libs'])
+
+env.Program(target = '../../policy_test',
+            source=[
+              'policy_test.cpp',
+              '../models/policy.cpp'
+            ],
+            LIBS=env['libs'])
+
+env.Program(target = '../../policy_case1_test',
+            source=[
+              'policy_case1_test.cpp',
+              '../models/policyForTest.cpp',
+              '../models/policy.cpp',
+              '../models/rule.cpp',
+              '../models/request.cpp'
+            ],
+            LIBS=env['libs'])
