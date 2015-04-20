@@ -75,6 +75,7 @@ int Hierarchy::loadFromFile(std::string fileName) {
   return 0;
 }
 
+
 int Hierarchy::loadFromFileF2(std::string fileName) {
   std::ifstream data(fileName);
   if(!data) {

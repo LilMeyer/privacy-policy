@@ -1,9 +1,9 @@
 
-#include <algorithm>                 // for std::for_each
-#include <iostream>                  // for std::cout
+#include <algorithm>      // for std::for_each
+#include <iostream>       // for std::cout
 #include <string>
 #include <unordered_map>
-#include <utility>                   // for std::pair
+#include <utility>        // for std::pair
 #include <vector>
 
 
@@ -24,12 +24,62 @@ using namespace std;
 
 
 PolicyForTest::PolicyForTest(std::string folder) {
-  loadFromFolder(folder);
+  loadFromFolder2(folder);
 }
 
 void PolicyForTest::run() {
   cout << "---Policy test---" << endl;
-  cout << request << endl;
+
+  // while(request->next()) {
+  request->next();
+  std::cout << "Request from : " << request->actor << " on "
+            << request->object << std::endl;
+  printRules();
+  // }
+
+  std::vector<int> ruleIds = effectiveRules(request->actorId, request->objectId);
+  std::cout << "EffectiveRules:" << ruleIds << std::endl;
+  std::cout << "Expected EffectiveRules:" << request->expEffectiveRules << std::endl;
+  ruleIds = deepestRules(ruleIds, request->actorId);
+  std::cout << "Deepest:" << ruleIds << std::endl;
+  std::cout << "IsAllowed:" << sumModalities(ruleIds) << std::endl;
+
+}
+
+int PolicyForTest::loadFromFolder2(std::string folder) {
+  std::ifstream *actorsData = new std::ifstream(folder + "actors.dat");
+  if(!actorsData) {
+    std::cerr << "No " << folder + "actors.dat file" << std::endl;
+    return -1;
+  }
+
+  std::ifstream *objectsData = new std::ifstream(folder + "objects.dat");
+  if(!objectsData) {
+    std::cerr << "No " << folder + "objects.dat file" << std::endl;
+    return -1;
+  }
+
+  std::ifstream *rulesData = new std::ifstream(folder + "rules.dat");
+  if(!rulesData) {
+    std::cerr << "No " << folder + "rules.dat file" << std::endl;
+    return -1;
+  }
+
+  std::ifstream *expectedData = new std::ifstream(folder + "expected.dat");
+  if(!expectedData) {
+    std::cerr << "No " << folder + "expected.dat file" << std::endl;
+    return -1;
+  }
+
+
+  std::ifstream *requestsData = new std::ifstream(folder + "requests.dat");
+  if(!requestsData) {
+    std::cerr << "No " << folder + "requests.dat file" << std::endl;
+    return -1;
+  }
+  request = new Request(actorsData, objectsData, rulesData,
+                        requestsData, expectedData, this);
+  return 0;
 }
 
 int PolicyForTest::loadFromFolder(std::string folder) {
@@ -117,6 +167,8 @@ int PolicyForTest::loadRequestsFromFile(std::string fileName) {
     return -1;
   }
 
+  // request = Request(data, this);
+
   std::vector<std::string> splitVec;
   int l;
 
@@ -137,14 +189,19 @@ int PolicyForTest::loadRequestsFromFile(std::string fileName) {
       continue;
     }
     cout << "here " << splitVec[0] << endl;
-    request = Request(actorStringToId(splitVec[0]),
-                      objectStringToId(splitVec[1]),
-                      *this);
+    // request = new Request(actorStringToId(splitVec[0]),
+    //                   objectStringToId(splitVec[1]),
+    //                   *this);
     cout << request << endl;
     break;
   }
   return 0;
 }
+
+
+
+
+
 
 void PolicyForTest::printRules() {
   std::unordered_map<int, Rule>::iterator it;

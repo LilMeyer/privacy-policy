@@ -31,7 +31,7 @@ public:
   std::ifstream actorsData;
   std::ifstream objectsData;
   std::ifstream requestsData;
-  Request request;
+  Request *request;
 
   PolicyForTest() {}
 
@@ -40,6 +40,7 @@ public:
   void run();
 
   int loadFromFolder(std::string folder);
+  int loadFromFolder2(std::string folder);
 
   int loadActorsFromFile(std::string fileName);
 

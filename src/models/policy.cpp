@@ -200,11 +200,8 @@ bool Policy::sumModalities(std::vector<int> rulesId) {
 
 bool Policy::isAllowed(int actorId, int objectId, std::string &str) {
   std::vector<int> ruleIds = effectiveRules(actorId, objectId);
-  cout << "EffectiveRules:" << ruleIds << endl;
   ruleIds = deepestRules(ruleIds, actorId);
-  cout << "Deepest:" << ruleIds << endl;
-  // return sumModalities(ruleIds);
-  return true;
+  return sumModalities(ruleIds);
 }
 
 bool Policy::isAllowed(std::string actor, std::string object, std::string &str) {
