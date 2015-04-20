@@ -29,9 +29,15 @@
 *.out
 *.app
 
-# binaries
+# Binaries
 build
 main
 *_test
 
 *.dblite
+
+# Dot files
+*.dot
+
+# Images
+*.png

@@ -36,7 +36,8 @@ void PolicyForTest::run() {
             << request->object << std::endl;
   printRules();
   // }
-
+  actors.toDotFile("src/tests/case1/actors");
+  objects.toDotFile("src/tests/case1/objects");
   std::vector<int> ruleIds = effectiveRules(request->actorId, request->objectId);
   std::cout << "EffectiveRules:" << ruleIds << std::endl;
   std::cout << "Expected EffectiveRules:" << request->expEffectiveRules << std::endl;

@@ -7,6 +7,8 @@
 #include <algorithm>                 // for std::for_each
 #include <map>
 #include <string>
+#include <unordered_map>
+
 
 /* Order is important ! */
 #include <boost/algorithm/string.hpp>
@@ -24,7 +26,7 @@ using namespace std;
 
 
 Hierarchy::Hierarchy() {
-  name[0] = "0";
+  name[0] = "000";
   name[1] = "1";
   name[2] = "2";
   name[3] = "3";
@@ -87,6 +89,7 @@ int Hierarchy::loadFromFileF2(std::string fileName) {
   std::vector<std::string> splitVec;
   bimap<int, std::string> verticesBimap;
   std::vector<pair<int, int> > edges;
+  pair<int, int> p;
 
   for (std::string line; std::getline(data, line);) {
     splitVec.clear();
@@ -104,22 +107,28 @@ int Hierarchy::loadFromFileF2(std::string fileName) {
     // cout << "id:" << id << endl;
     // cout << splitVec[0] << " " << splitVec[1] << endl;
 
-    bm_type::right_const_iterator right_iter;
-    right_iter = verticesBimap.right.find(splitVec[0]);
+    bm_type::right_const_iterator rightIter;
+    rightIter = verticesBimap.right.find(splitVec[0]);
 
-    if (right_iter == verticesBimap.right.end()) {
-      // cout << "INsert" << id << " " << splitVec[0] << endl;
+    if (rightIter == verticesBimap.right.end()) {
+      cout << "Insert (first element)" << id << " " << splitVec[0] << endl;
       verticesBimap.insert(bm_type::value_type(id, splitVec[0]));
+      p.first = id;
       id++;
+    } else {
+      p.first = rightIter->second;
     }
 
-    right_iter = verticesBimap.right.find(splitVec[1]);
-    if (right_iter == verticesBimap.right.end()) {
-      // cout << "INsert" << id << " " << splitVec[1] << endl;
+    rightIter = verticesBimap.right.find(splitVec[1]);
+    if (rightIter == verticesBimap.right.end()) {
+      cout << "Insert (second element)" << id << " " << splitVec[1] << endl;
       verticesBimap.insert(bm_type::value_type(id, splitVec[1]));
+      p.second = id;
       id++;
+    } else {
+      p.second = rightIter->second;
     }
-    edges.push_back(pair<int, int> (id-2, id-1));
+    edges.push_back(p);
   }
 
 
@@ -130,7 +139,7 @@ int Hierarchy::loadFromFileF2(std::string fileName) {
   }
 
   for(unsigned int i=0; i<edges.size(); i++) {
-    // cout << edges[i].first << " " << edges[i].second;
+    cout << edges[i].first << " " << edges[i].second << endl;;
     addEdge(edges[i].first, edges[i].second);
   }
 
@@ -334,7 +343,11 @@ void Hierarchy::toDotFile(std::string fileName) {
   if(!isClosureComputed) {
     transitiveClosure();
   }
-  std::ofstream out("build/" + fileName + ".dot");
+  std::ofstream out(fileName + ".dot");
+  std::unordered_map<int, std::string>::iterator it;
+  for(it = namesUmap.begin(); it != namesUmap.end(); it++) {
+    name[it->first] = it->second;
+  }
   write_graphviz(out, closure, make_label_writer(name));
 }
 
@@ -342,6 +355,12 @@ void Hierarchy::reverseToDotFile(std::string fileName) {
   if(!isClosureComputed) {
     transitiveClosure();
   }
-  std::ofstream out("build/" + fileName + ".dot");
+  std::ofstream out(fileName + ".dot");
+
+  std::unordered_map<int, std::string>::iterator it;
+  for(it = namesUmap.begin(); it != namesUmap.end(); it++) {
+    name[it->first] = it->second;
+  }
+
   write_graphviz(out, closureReverse, make_label_writer(name));
 }

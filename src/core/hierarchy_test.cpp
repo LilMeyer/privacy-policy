@@ -132,20 +132,20 @@ protected:
     r = hierarchy.inAdjacentIndexVertices(rootId);
     CPPUNIT_ASSERT(vectorSameValues(v3, r));
 
-    hierarchy.toDotFile("hierarchy_test");
+    hierarchy.toDotFile("src/examples/actors");
   }
 
   void test2() {
     Hierarchy example1;
     example1.loadFromFile("src/examples/graph1.dat");
-    example1.toDotFile("example1");
+    example1.toDotFile("src/examples/actors1");
   }
 
   void test3() {
     std::cout << "Test 3" << std::endl;
     Hierarchy example2;
     example2.loadFromFileF2("src/examples/graph1_f2.dat");
-    example2.toDotFile("example1_f2");
+    example2.toDotFile("src/examples/actors1_f2");
   }
 
 

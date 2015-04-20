@@ -3,15 +3,19 @@ include Makefile_tests
 make_all:
 	scons
 
-policy:
-	scons policy_test
-	./policy_test
-	# dot build/actorsHierarchyClosure.dot -Tpng -o build/actorsHierarchyClosure.png
-	# dot build/objectsHierarchyClosure.dot -Tpng -o build/objectsHierarchyClosure.png
-	# dot build/actorsHierarchyClosureReverse.dot -Tpng -o build/actorsHierarchyClosureReverse.png
-	# dot build/actorsGraphviz.dot -Tpng -o build/actorsGraphviz.png
-	# dot build/objectsGraphviz.dot -Tpng -o build/objectsGraphviz.png
+hierarchy:
+	scons hierarchy_test
+	./hierarchy_test
+	dot src/examples/actors.dot -Tpng -o src/examples/actors.png
+	dot src/examples/actors1.dot -Tpng -o src/examples/actors1.png
+	dot src/examples/actors1_f2.dot -Tpng -o src/examples/actors1_f2.png
 
+
+policy:
+	scons policy_case1_test
+	./policy_case1_test
+	dot src/tests/case1/actors.dot -Tpng -o src/tests/case1/actors.png
+	dot src/tests/case1/objects.dot -Tpng -o src/tests/case1/objects.png
 
 travis:
 	scons mode=debug && make generate_tests && make run_all
