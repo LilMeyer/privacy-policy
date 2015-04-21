@@ -40,15 +40,6 @@ public:
   void run();
 
   int loadFromFolder(std::string folder);
-  int loadFromFolder2(std::string folder);
-
-  int loadActorsFromFile(std::string fileName);
-
-  int loadObjectsFromFile(std::string fileName);
-
-  int loadRulesFromFile(std::string fileName);
-
-  int loadRequestsFromFile(std::string fileName);
 
   void printRules();
 

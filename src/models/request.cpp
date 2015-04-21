@@ -79,12 +79,21 @@ int Request::next() {
     break;
   }
 
+  expEffectiveRules.clear();
+  expDeepestRules.clear();
+  expHighestRules.clear();
+
   for (std::string line; std::getline(*expectedData, line);) {
     found = line.find("#");
     if (found != std::string::npos) {
       continue;
     }
-    cout << "line " << line << endl;
+
+    found = line.find("next");
+    if (found != std::string::npos) {
+      continue;
+    }
+    // cout << "line " << line << endl;
     splitVec.clear();
     split(splitVec, line, is_any_of(";"), token_compress_on);
     if (splitVec.size()!=4) {
@@ -106,10 +115,14 @@ int Request::next() {
       expDeepestRules.push_back(atoi(subVec[i].c_str()));
     }
 
+    if(splitVec[3] == "1") {
+      expIsAllowed = true;
+    }
+
     break;
   }
 
-  return nextRules();
+  return 1;
 }
 
 
@@ -119,6 +132,8 @@ int Request::nextExpectedResult() {
 
 
 int Request::nextRules() {
+  policyPtr->rulesM.clear();
+
   std::vector<std::string> splitVec;
   bimap<int, std::string> verticesBimap;
   std::vector<pair<int, int> > edges;
@@ -177,6 +192,7 @@ int Request::nextActors() {
   std::vector<std::string> splitVec;
   bimap<int, std::string> verticesBimap;
   std::vector<pair<int, int> > edges;
+  pair<int, int> p;
 
   for (std::string line; std::getline(*actorsData, line);) {
     splitVec.clear();
@@ -187,20 +203,26 @@ int Request::nextActors() {
       continue;
     }
 
-    bm_type::right_const_iterator right_iter;
-    right_iter = verticesBimap.right.find(splitVec[0]);
+    bm_type::right_const_iterator rightIter;
+    rightIter = verticesBimap.right.find(splitVec[0]);
 
-    if (right_iter == verticesBimap.right.end()) {
+    if (rightIter == verticesBimap.right.end()) {
       verticesBimap.insert(bm_type::value_type(id, splitVec[0]));
+      p.first = id;
       id++;
+    } else {
+      p.first = rightIter->second;
     }
 
-    right_iter = verticesBimap.right.find(splitVec[1]);
-    if (right_iter == verticesBimap.right.end()) {
+    rightIter = verticesBimap.right.find(splitVec[1]);
+    if (rightIter == verticesBimap.right.end()) {
       verticesBimap.insert(bm_type::value_type(id, splitVec[1]));
+      p.second = id;
       id++;
+    } else {
+      p.second = rightIter->second;
     }
-    edges.push_back(pair<int, int> (id-2, id-1));
+    edges.push_back(p);
   }
 
   bm_type::left_const_iterator it;
@@ -229,16 +251,16 @@ int Request::nextObjects() {
       continue;
     }
 
-    bm_type::right_const_iterator right_iter;
-    right_iter = verticesBimap.right.find(splitVec[0]);
+    bm_type::right_const_iterator rightIter;
+    rightIter = verticesBimap.right.find(splitVec[0]);
 
-    if (right_iter == verticesBimap.right.end()) {
+    if (rightIter == verticesBimap.right.end()) {
       verticesBimap.insert(bm_type::value_type(id, splitVec[0]));
       id++;
     }
 
-    right_iter = verticesBimap.right.find(splitVec[1]);
-    if (right_iter == verticesBimap.right.end()) {
+    rightIter = verticesBimap.right.find(splitVec[1]);
+    if (rightIter == verticesBimap.right.end()) {
       verticesBimap.insert(bm_type::value_type(id, splitVec[1]));
       id++;
     }

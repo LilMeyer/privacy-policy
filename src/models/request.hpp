@@ -71,6 +71,7 @@ public:
   std::vector<int> expEffectiveRules;
   std::vector<int> expHighestRules;
   std::vector<int> expDeepestRules;
+  bool expIsAllowed;
 };
 
 #endif
