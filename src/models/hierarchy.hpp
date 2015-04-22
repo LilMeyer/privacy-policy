@@ -77,6 +77,7 @@ public:
   adjacency_list<> getTransitiveClosure();
 
   void toDotFile(std::string fileName);
+  void toDotFileFromGraph(std::string fileName);
 
   void reverseToDotFile(std::string fileName);
 

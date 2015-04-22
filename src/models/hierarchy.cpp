@@ -345,10 +345,24 @@ void Hierarchy::toDotFile(std::string fileName) {
   }
   std::ofstream out(fileName + ".dot");
   std::unordered_map<int, std::string>::iterator it;
+  /* A ajouter quand on ajoute un vertex!! */
   for(it = namesUmap.begin(); it != namesUmap.end(); it++) {
     name[it->first] = it->second;
   }
   write_graphviz(out, closure, make_label_writer(name));
+}
+
+void Hierarchy::toDotFileFromGraph(std::string fileName) {
+  if(!isClosureComputed) {
+    transitiveClosure();
+  }
+  std::ofstream out(fileName + ".dot");
+  std::unordered_map<int, std::string>::iterator it;
+  for(it = namesUmap.begin(); it != namesUmap.end(); it++) {
+    name[it->first] = it->second;
+  }
+  // write_graphviz(out, closure, make_label_writer(name));
+  write_graphviz(out, graph, make_label_writer(name));
 }
 
 void Hierarchy::reverseToDotFile(std::string fileName) {

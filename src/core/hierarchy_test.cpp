@@ -52,6 +52,8 @@ public:
             &HierarchyTest::test2));
     suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test3 import.",
             &HierarchyTest::test3));
+    suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test4 graphviz.",
+            &HierarchyTest::test4));
     return suiteOfTests;
   }
 
@@ -146,6 +148,13 @@ protected:
     Hierarchy example2;
     example2.loadFromFileF2("src/examples/graph1_f2.dat");
     example2.toDotFile("src/examples/actors1_f2");
+  }
+
+  void test4() {
+    std::cout << "Test 4" << std::endl;
+    Hierarchy example4;
+    example4.loadFromFileF2("src/examples/graph1_f2.dat");
+    example4.toDotFileFromGraph("src/examples/actors1_f2_bis");
   }
 
 
