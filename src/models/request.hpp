@@ -72,6 +72,8 @@ public:
   std::vector<int> expHighestRules;
   std::vector<int> expDeepestRules;
   bool expIsAllowed;
+
+  int requestNumber = 1;
 };
 
 #endif

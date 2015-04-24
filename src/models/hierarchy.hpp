@@ -22,6 +22,8 @@ using namespace std;
 class Hierarchy {
 typedef property <vertex_name_t, char> Name;
 typedef property <vertex_index_t, std::size_t, Name> Index;
+// typedef property< vertex_color_t, default_color_type > Index;
+
 typedef adjacency_list <listS, listS, directedS, Index> Graph;
 typedef typename graph_traits <Graph>::vertex_descriptor Vertex;
 typedef graph_traits <Graph>::vertex_descriptor vertex_t;
@@ -60,7 +62,6 @@ public:
 
   void printVerticesReverse();
 
-
   /**
    * Index to vertex_descriptor : vertex(index, graph)
    * vertex_descripor to index : get(index_map, vertexIt)
@@ -78,6 +79,8 @@ public:
 
   void toDotFile(std::string fileName);
   void toDotFileFromGraph(std::string fileName);
+
+  void write_graphviz_p();
 
   void reverseToDotFile(std::string fileName);
 

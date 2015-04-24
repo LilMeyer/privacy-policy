@@ -44,6 +44,7 @@ int Request::next() {
   std::size_t found;
 
   for (std::string line; std::getline(*requestsData, line);) {
+    cout << "Line " << line << endl;
     found = line.find("next");
     if (found != std::string::npos) {
       if(line.find("actors") != std::string::npos) {
@@ -76,7 +77,8 @@ int Request::next() {
     objectId = policyPtr->objectStringToId(splitVec[1]);
     actor = splitVec[0];
     object = splitVec[1];
-    break;
+    cout << "Request number #" << requestNumber << endl;
+    requestNumber++;
   }
 
   expEffectiveRules.clear();
@@ -117,6 +119,8 @@ int Request::next() {
 
     if(splitVec[3] == "1") {
       expIsAllowed = true;
+    } else {
+      expIsAllowed = false;
     }
 
     break;
@@ -196,7 +200,7 @@ int Request::nextActors() {
 
   for (std::string line; std::getline(*actorsData, line);) {
     splitVec.clear();
-    split(splitVec, line, is_any_of("->"), token_compress_on);
+    split(splitVec, line, is_any_of(">"), token_compress_on);
     l = splitVec.size();
 
     if(l!=2) {
@@ -245,7 +249,7 @@ int Request::nextObjects() {
 
   for (std::string line; std::getline(*objectsData, line);) {
     splitVec.clear();
-    split(splitVec, line, is_any_of("->"), token_compress_on);
+    split(splitVec, line, is_any_of(">"), token_compress_on);
     l = splitVec.size();
     if(l!=2) {
       continue;

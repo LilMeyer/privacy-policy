@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <utility>                   // for std::pair
 #include <vector>
+#include <unordered_set>
 
 #include "./../utils/vectors.hpp"
 #include "rule.hpp"
@@ -158,33 +159,48 @@ std::vector<int> Policy::deepestRules(std::vector <int> rules, int actor) {
   // std::cout << "adjacentIndexVertices" << adjacents << std::endl;
 
   std::vector<int> inRange;
+  std::vector<int> rInRange;
   std::unordered_map<int, std::vector<int> > inRangeAdjacentsUmap;
-
+  int _actor;
   for(int i=0; i<l; i++) {
-    if(vectorContains(adjacents, rules[i])) {
-      inRange.push_back(rules[i]);
+    _actor = rulesM.find(rules[i])->second.actor;
+    if(vectorContains(adjacents, _actor)) {
+      inRange.push_back(_actor);
+      rInRange.push_back(rules[i]);
       inRangeAdjacentsUmap.insert(pair<int, std::vector<int> >
-        (rules[i], actors.inAdjacentIndexVertices(rules[i])));
+        (rules[i], actors.inAdjacentIndexVertices(_actor)));
     }
   }
   cout << "inRange " << inRange << endl;
   /* Suppression de tous les moins spécifiques !! */
   std::vector<int> tmp;
   std::vector<int> toRemove;
+  std::unordered_set<int> vertices;
   for(it = inRangeAdjacentsUmap.begin(); it != inRangeAdjacentsUmap.end(); it++) {
-    cout << it->first << ": adjacents=";
+    cout << "Rule" << it->first << ":" << rulesM.find(it->first)->second.actor
+      << it->second << " adjacents=";
     tmp = it->second;
-    for(unsigned int i = 0; i < tmp.size(); i++) {
-      if(inRangeAdjacentsUmap.find(tmp[i]) != inRangeAdjacentsUmap.end()) {
-        // remove de inrange
-        toRemove.push_back(tmp[i]);
-      }
-      cout << tmp[i] << ",";
+    for(int i=0; i<it->second.size(); i++) {
+      vertices.insert(it->second[i]);
     }
     cout << endl;
   }
 
-  result = vectorDiff(inRange, toRemove);
+  cout << "Vertices " << endl;
+  for (auto it = vertices.begin(); it != vertices.end(); ++it ) {
+    std::cout << " " << *it;
+  }
+  cout << endl;
+
+  toRemove.clear();
+  for(it = inRangeAdjacentsUmap.begin(); it != inRangeAdjacentsUmap.end(); it++) {
+    if(vertices.find(rulesM.find(it->first)->second.actor) != vertices.end()) {
+      toRemove.push_back(it->first);
+    }
+  }
+  cout << "toRemove " << toRemove << endl;
+
+  result = vectorDiff(rInRange, toRemove);
   return result;
 }
 

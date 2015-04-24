@@ -26,6 +26,9 @@ using namespace std;
 
 
 Hierarchy::Hierarchy() {
+  /**
+   * Ne déclarer name que dans la fonction toDotFile !
+   */
   name[0] = "000";
   name[1] = "1";
   name[2] = "2";
@@ -204,6 +207,9 @@ void Hierarchy::addEdge(int i, int j) {
     std::cout << "Vertex " << j << std::endl;
     throw std::invalid_argument("Can't find vertex");
   }
+
+  // cout << "Edge: " << namesBimap.left.find(i)->second << "(" << i << ")->"
+  //      << namesBimap.left.find(j)->second << "(" << j << ")" << endl;
   add_edge(vertexItI->second, vertexItJ->second, graph);
   add_edge(vertexItRJ->second, vertexItRI->second, graphReverse);
   isClosureComputed = false;
@@ -361,9 +367,43 @@ void Hierarchy::toDotFileFromGraph(std::string fileName) {
   for(it = namesUmap.begin(); it != namesUmap.end(); it++) {
     name[it->first] = it->second;
   }
-  // write_graphviz(out, closure, make_label_writer(name));
-  write_graphviz(out, graph, make_label_writer(name));
+  write_graphviz(out, closure, make_label_writer(name));
 }
+
+
+
+//   template <typename Graph, typename VertexPropertiesWriter,
+//             typename EdgePropertiesWriter, typename GraphPropertiesWriter,
+//             typename VertexID>
+//   inline void write_graphviz(std::ostream& out, const Graph& g,
+//                              VertexPropertiesWriter vpw,
+//                              EdgePropertiesWriter epw,
+//                              GraphPropertiesWriter gpw,
+//                              VertexID vertex_id)
+// void Hierarchy::write_graphviz_p() {
+//     typedef typename graph_traits<Graph>::directed_category cat_type;
+//     typedef graphviz_io_traits<cat_type> Traits;
+//     std::string name = "G";
+//     out << Traits::name() << " " << name << " {" << std::endl;
+
+//     gpw(out); //print graph properties
+
+//     typename graph_traits<Graph>::vertex_iterator i, end;
+
+//     for(tie(i,end) = vertices(g); i != end; ++i) {
+//       out << get(vertex_id, *i);
+//       vpw(out, *i); //print vertex attributes
+//       out << ";" << std::endl;
+//     }
+//     typename graph_traits<Graph>::edge_iterator ei, edge_end;
+//     for(tie(ei, edge_end) = edges(g); ei != edge_end; ++ei) {
+//       out << get(vertex_id, source(*ei, g)) << Traits::delimiter() << get(vertex_id, target(*ei, g)) << " ";
+//       epw(out, *ei); //print edge attributes
+//       out << ";" << std::endl;
+//     }
+//     out << "}" << std::endl;
+// }
+
 
 void Hierarchy::reverseToDotFile(std::string fileName) {
   if(!isClosureComputed) {

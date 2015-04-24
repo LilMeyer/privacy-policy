@@ -1,19 +1,19 @@
-All-Hsopital->CHUS
-All-Hsopital->Magog
-Magog->Pat
-Pat->Vis
-Vis->Evalu
-Evalu->BloodTest
-BloodTest->VIH
-BloodTest->Cancer
-Evalu->Radiology
-Radiology->X-RAy
-Radiology->IRM
-CHUS->Patient
-Patient->Visit
-Visit->Evaluation
-Evaluation->Sante mentale
-Evaluation->Sante dentaire
-Sante dentaire->Examen dentaire
-Sante mentale->Examen clinique
-Sante mentale->Examen
+All-Hsopital>CHUS
+All-Hsopital>Magog
+Magog>Pat
+Pat>Vis
+Vis>Evalu
+Evalu>BloodTest
+BloodTest>VIH
+BloodTest>Cancer
+Evalu>Radiology
+Radiology>X-RAy
+Radiology>IRM
+CHUS>Patient
+Patient>Visit
+Visit>Evaluation
+Evaluation>Sante mentale
+Evaluation>Sante dentaire
+Sante dentaire>Examen dentaire
+Sante mentale>Examen clinique
+Sante mentale>Examen

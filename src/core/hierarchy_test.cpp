@@ -93,9 +93,9 @@ protected:
     hierarchy.printVertices();
 
     string str1 = "0 [Root]->(1, 2)\n"
-                 "1 [King]->(3)\n"
-                 "2 [Queen]->()\n"
-                 "3 [KingSon]->()\n";
+                  "1 [King]->(3)\n"
+                  "2 [Queen]->()\n"
+                  "3 [KingSon]->()\n";
     CPPUNIT_ASSERT(str1.compare(strCout.str()) == 0);
 
     strCout.str("");
