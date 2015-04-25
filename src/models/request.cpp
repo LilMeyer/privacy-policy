@@ -246,11 +246,13 @@ int Request::nextObjects() {
   std::vector<std::string> splitVec;
   bimap<int, std::string> verticesBimap;
   std::vector<pair<int, int> > edges;
+  pair<int, int> p;
 
   for (std::string line; std::getline(*objectsData, line);) {
     splitVec.clear();
     split(splitVec, line, is_any_of(">"), token_compress_on);
     l = splitVec.size();
+
     if(l!=2) {
       continue;
     }
@@ -260,15 +262,21 @@ int Request::nextObjects() {
 
     if (rightIter == verticesBimap.right.end()) {
       verticesBimap.insert(bm_type::value_type(id, splitVec[0]));
+      p.first = id;
       id++;
+    } else {
+      p.first = rightIter->second;
     }
 
     rightIter = verticesBimap.right.find(splitVec[1]);
     if (rightIter == verticesBimap.right.end()) {
       verticesBimap.insert(bm_type::value_type(id, splitVec[1]));
+      p.second = id;
       id++;
+    } else {
+      p.second = rightIter->second;
     }
-    edges.push_back(pair<int, int> (id-2, id-1));
+    edges.push_back(p);
   }
 
   bm_type::left_const_iterator it;

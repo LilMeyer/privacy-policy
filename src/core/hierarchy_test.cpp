@@ -54,6 +54,7 @@ public:
             &HierarchyTest::test3));
     suiteOfTests->addTest(new CppUnit::TestCaller<HierarchyTest>("Test4 graphviz.",
             &HierarchyTest::test4));
+
     return suiteOfTests;
   }
 

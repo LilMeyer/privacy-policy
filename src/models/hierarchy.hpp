@@ -80,7 +80,7 @@ public:
   void toDotFile(std::string fileName);
   void toDotFileFromGraph(std::string fileName);
 
-  void write_graphviz_p();
+  void closureToDotFile(std::string fileName);
 
   void reverseToDotFile(std::string fileName);
 
